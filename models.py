@@ -6,7 +6,7 @@ from datetime import date
 class Adherance(BaseModel):
     is_full_time : bool
     is_part_time : bool
-    status = bool
+    status : bool
     
 # Appontments model
 class Appointment(BaseModel):

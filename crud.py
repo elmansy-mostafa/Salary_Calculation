@@ -1,7 +1,7 @@
 from typing import Optional, List
 from datetime import date
-from models import DailyReport, Employee
-from database import employee_collection, daily_report_collection
+from Salary_Calculation.models import DailyReport, Employee
+from Salary_Calculation.database import employee_collection, daily_report_collection
 
 # CRUD operations for employee
 
