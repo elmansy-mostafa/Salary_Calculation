@@ -1,11 +1,9 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import date
+from datetime import datetime
 
 #Adherance model
 class Adherance(BaseModel):
-    is_full_time : bool
-    is_part_time : bool
     status : bool
     
 # Appontments model
@@ -33,14 +31,14 @@ class Employee(BaseModel):
     name : str
     national_id : int
     company_id : int
-    start_date : date
-    end_date : Optional[date] = None
+    start_date : datetime
+    end_date : Optional[datetime] = None
     position : str
     
 # dailyreport model
 class DailyReport(BaseModel):
-    date : date
-    employee : Employee
+    date : datetime
+    employee_id : int
     adherance : Adherance
     appointment : Appointment
     compensation : Compensation

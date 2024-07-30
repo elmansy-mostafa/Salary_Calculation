@@ -1,6 +1,6 @@
 from typing import Optional, List
-from datetime import date
-from Salary_Calculation.models import DailyReport, Employee
+from datetime import datetime
+from Salary_Calculation.models import DailyReport, Employee, SalaryCalculator
 from Salary_Calculation.database import employee_collection, daily_report_collection
 
 # CRUD operations for employee
@@ -31,7 +31,7 @@ async def delete_employee(employee_id : int) -> bool:
     return result.deleted_count == 1
 
 
-async def get_all_employee() -> list[Employee]:
+async def get_all_employee() -> List[Employee]:
     employee_sursor = employee_collection.find({})
     employees = await employee_sursor.to_list(length=None)
     return [Employee(**employee_data) for employee_data in employees]
@@ -43,51 +43,54 @@ async def create_daily_report(report:DailyReport) -> DailyReport:
     await daily_report_collection.insert_one(report_dict)
     return report
 
-async def get_daily_report(report_id : int) -> Optional[DailyReport]:
-    report_data =await daily_report_collection.find_one({"_id":report_id})
+async def get_daily_report(employee_id:int, report_date:datetime) -> Optional[DailyReport]:
+    report_data =await daily_report_collection.find_one({"employee_id":employee_id, "date":report_date})
     if report_data:
         return DailyReport(**report_data)
     return None
 
-async def update_daily_report(report_id:int, update_date:dict) -> Optional[DailyReport]:
+async def update_daily_report(employee_id:int, report_date:datetime, update_data:dict) -> Optional[DailyReport]:
     updated_report = await daily_report_collection.find_one_and_update(
-        {"_id" : report_id},
-        {"$set" : update_date},
+        {"employee_id" : employee_id, "date" : report_date},
+        {"$set" : update_data},
         return_document = True
     )
     if updated_report:
         return DailyReport(**updated_report)
     return None
 
-async def delete_daily_report(report_id:int) -> bool:
-    result = await daily_report_collection.delete_one({"id":report_id})
-    return result.delete_count == 1
+async def delete_daily_report(employee_id:int, report_date:datetime) -> bool:
+    result = await daily_report_collection.delete_one({"employee_id":employee_id, "date":report_date})
+    return result.deleted_count == 1
 
-async def get_all_daily_reports() -> list[DailyReport]:
+async def get_all_daily_reports() -> List[DailyReport]:
     report_cursor = daily_report_collection.find({})
     reports = await report_cursor.to_list(length=None)
     return [DailyReport(**report_data) for report_data in reports]
 
 # get dailyreport by specific employee and range date
-async def get_daily_reports_by_employee_and_range_date(employee_id:int, start_date:Optional[date], end_date:Optional[date]) -> list[DailyReport]:
+async def get_daily_reports_by_employee_and_range_date(employee_id:int, start_date:Optional[datetime], end_date:Optional[datetime]) -> list[DailyReport]:
     query = {"employee_id" : employee_id}
     if start_date and end_date:
-        query["data"] = {"$gte":start_date, "$lte":end_date}
+        query["date"] = {"$gte":start_date, "$lte":end_date}
     elif start_date:
-        query["data"] = {"$gte":start_date}
+        query["date"] = {"$gte":start_date}
     elif end_date:
-        query["data"] = {"$lte":end_date}
-    
-    reports = await DailyReport.find(query).to_list()
-    return reports
+        query["date"] = {"$lte":end_date}
+    cursor = daily_report_collection.find(query)
+    reports = await cursor.to_list(length=None)
+    return [DailyReport(**report) for report in reports]
 
-# get dailyreport by specific employee and specific date
-async def get_daily_report_by_employee_and_date(employee_id:int, report_date:date) -> Optional[DailyReport]:
+
+async def calculate_daily_report_salary(employee_id:int, report_date:datetime) -> float:
     query = {
         "employee_id" : employee_id,
-        "data" : report_date
+        "date" : report_date
     }
-    report = await DailyReport.find(query)
-    return report
-
+    report_data = await daily_report_collection.find_one(query)
+    if not report_data:
+        return None
+    report = DailyReport(**report_data)
+    total_salary = SalaryCalculator.calculate_salary(report)
+    return total_salary
     
