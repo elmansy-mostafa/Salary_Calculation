@@ -1,7 +1,32 @@
 from typing import Optional, List
 from datetime import datetime
 from Salary_Calculation.models import DailyReport, Employee, SalaryCalculator
-from Salary_Calculation.database import employee_collection, daily_report_collection
+from Salary_Calculation.database import employee_collection, daily_report_collection, user_collection
+from Salary_Calculation.models import UserInDB
+from Salary_Calculation.schemas import UserCreate
+from Salary_Calculation.utils import get_password_hash
+
+
+# CRUD operations for User
+
+
+async def create_user(user:UserCreate) -> UserInDB:
+    hashed_password = get_password_hash(user.password)
+    db_user = UserInDB(email=user.email, hashed_password=hashed_password)
+    await user_collection.insert_one(db_user.dict())
+    return db_user
+
+async def get_user_by_email(email:str) -> UserInDB:
+    user_data =  await user_collection.find_one({"email":email}) 
+    if user_data:
+        return UserInDB(**user_data)
+    return None
+
+async def get_all_user() -> List[UserInDB]:
+    users = await user_collection.find({}).to_list(length=None)
+    return [UserInDB(**user) for user in users]
+
+
 
 # CRUD operations for employee
 

@@ -1,6 +1,22 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
+
+
+# user model schemas 
+
+class UserCreate(BaseModel):
+    email : EmailStr
+    password : str
+    
+
+    
+class Token(BaseModel):
+    access_token : str
+    token_type : str
+    
+class TokenData(BaseModel):
+    email : Optional[str] = None
 
 #Adherance model
 class Adherance(BaseModel):

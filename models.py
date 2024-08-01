@@ -1,6 +1,21 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 from datetime import datetime
+from beanie import Document, PydanticObjectId
+
+
+# User model
+class User(BaseModel):
+    email : EmailStr
+    hashed_password : str
+    
+class UserInDB(User):
+    id : PydanticObjectId = Field(default_factory=PydanticObjectId, alias="_id")
+
+    class Congig:
+        orm_mode = True
+    
+        
 
 #Adherance model
 class Adherance(BaseModel):

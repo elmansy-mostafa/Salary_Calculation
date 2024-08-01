@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import Optional, List
 from datetime import datetime
-from Salary_Calculation.crud import create_employee, get_employee, update_employee, delete_employee, get_all_employee, create_daily_report, update_daily_report, get_daily_report, delete_daily_report, get_all_daily_reports, get_daily_reports_by_employee_and_range_date, calculate_daily_report_salary
+from Salary_Calculation.crud import  create_employee, get_employee, update_employee, delete_employee, get_all_employee, create_daily_report, update_daily_report, get_daily_report, delete_daily_report, get_all_daily_reports, get_daily_reports_by_employee_and_range_date, calculate_daily_report_salary
 from Salary_Calculation.schemas import EmployeeCreate, EmployeeUpdate, EmployeeResponse, DailyReportCreate, DailyReportUpdate, DailyReportResponse
 
 
@@ -35,7 +35,7 @@ async def delete_employee_endpoint(employee_id:int):
         raise HTTPException(status_code=404, detail="Employee not found")
     return deleted
 
-@router.get("/employees", response_model=list[EmployeeResponse])
+@router.get("/employees", response_model=List[EmployeeResponse])
 async def get_all_employees_endpoint():
     employees = await get_all_employee()
     return employees
@@ -68,7 +68,7 @@ async def delete_daily_report_endpoint(employee_id:int, report_date:datetime):
         raise HTTPException(status_code=404, detail="Daily report not found")
     return deleted
 
-@router.get("/daily_reports", response_model=list[DailyReportResponse])
+@router.get("/daily_reports", response_model=List[DailyReportResponse])
 async def get_all_daily_reports_endpoints():
     reports = await get_all_daily_reports()
     return reports
