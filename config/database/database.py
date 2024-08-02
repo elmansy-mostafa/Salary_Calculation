@@ -1,12 +1,15 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
-from Salary_Calculation.models import DailyReport, Employee, UserInDB
+from Salary_Calculation.shared.models_schemas.models import DailyReport, Employee, User
+# from Salary_Calculation.config.settings import settings
+
+
 
 # creating a client instance to interact with mongodb
 client = AsyncIOMotorClient("mongodb://localhost:27017")
 
 # specifying database within mongodb
-database = client.Salary_Calculation
+database = client.db_user
 
 # defining collections within database
 employee_collection = database.get_collection("employees")
@@ -15,4 +18,5 @@ user_collection = database.get_collection("users")
 
 #function to initialize beanie with the database and models
 async def init_db():
-    await init_beanie(database, document_models=[DailyReport, Employee, UserInDB])
+    await init_beanie(database=database, document_models=[DailyReport, Employee, User])
+

@@ -1,65 +1,9 @@
 from typing import Optional, List
 from datetime import datetime
-from Salary_Calculation.models import DailyReport, Employee, SalaryCalculator
-from Salary_Calculation.database import employee_collection, daily_report_collection, user_collection
-from Salary_Calculation.models import UserInDB
-from Salary_Calculation.schemas import UserCreate
-from Salary_Calculation.utils import get_password_hash
+from Salary_Calculation.shared.models_schemas.models import DailyReport, SalaryCalculator
+from Salary_Calculation.config.database.database import daily_report_collection
 
 
-# CRUD operations for User
-
-
-async def create_user(user:UserCreate) -> UserInDB:
-    hashed_password = get_password_hash(user.password)
-    db_user = UserInDB(email=user.email, hashed_password=hashed_password)
-    await user_collection.insert_one(db_user.dict())
-    return db_user
-
-async def get_user_by_email(email:str) -> UserInDB:
-    user_data =  await user_collection.find_one({"email":email}) 
-    if user_data:
-        return UserInDB(**user_data)
-    return None
-
-async def get_all_user() -> List[UserInDB]:
-    users = await user_collection.find({}).to_list(length=None)
-    return [UserInDB(**user) for user in users]
-
-
-
-# CRUD operations for employee
-
-async def create_employee(employee : Employee) -> Employee:
-    employee_dict = employee.dict()
-    await employee_collection.insert_one(employee_dict)
-    return employee
-
-async def get_employee(employee_id : int) -> Optional[Employee]:
-    employee_data = await employee_collection.find_one({"id":employee_id})
-    if employee_data:
-        return Employee(**employee_data)
-    return None
-
-async def update_employee(employee_id:int, update_data:dict) -> Optional[Employee]:
-    updated_employee = await employee_collection.find_one_and_update(
-        {"id" : employee_id},
-        {"$set" : update_data},
-        return_document = True
-    )
-    if updated_employee:
-        return Employee(**updated_employee)
-    return None
-
-async def delete_employee(employee_id : int) -> bool:
-    result = await employee_collection.delete_one({"id":employee_id})
-    return result.deleted_count == 1
-
-
-async def get_all_employee() -> List[Employee]:
-    employee_sursor = employee_collection.find({})
-    employees = await employee_sursor.to_list(length=None)
-    return [Employee(**employee_data) for employee_data in employees]
 
 # CRUD operations for daily_report        
 
@@ -114,8 +58,7 @@ async def calculate_daily_report_salary(employee_id:int, report_date:datetime) -
     }
     report_data = await daily_report_collection.find_one(query)
     if not report_data:
-        return None
+        return 0
     report = DailyReport(**report_data)
     total_salary = SalaryCalculator.calculate_salary(report)
     return total_salary
-    

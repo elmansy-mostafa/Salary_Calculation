@@ -8,15 +8,22 @@ from datetime import datetime
 class UserCreate(BaseModel):
     email : EmailStr
     password : str
-    
+    role : str
 
-    
+class UserRead(BaseModel):
+    id : str
+    email : EmailStr
+    role : str
+
+
 class Token(BaseModel):
     access_token : str
     token_type : str
     
 class TokenData(BaseModel):
     email : Optional[str] = None
+    role : Optional[str] = None
+
 
 #Adherance model
 class Adherance(BaseModel):

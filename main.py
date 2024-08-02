@@ -1,20 +1,27 @@
 from fastapi import FastAPI, Depends
-from Salary_Calculation.routers import auth, endpoints
+from Salary_Calculation.modules.users import users_router
+from Salary_Calculation.modules.employees import employees_router
+from Salary_Calculation.modules.daily_reports import daily_reports_router
+from Salary_Calculation.config.database.database import init_db
+from Salary_Calculation.modules.auth.authorizations import get_admin
+
 # from Salary_Calculation.database import init as init_db
 
 app = FastAPI()
 
-# protect endpoints with authentication
 
 
 
-app.include_router(auth.router)
-app.include_router(endpoints.router, dependencies=[Depends(auth.get_current_user)])
+# connect to mongodb on startup
 
-# # start event to initialize the database
 # @app.on_event("startup")
 # async def on_startup():
 #     await init_db()
+    
+app.include_router(users_router.router)
+app.include_router(employees_router.router, dependencies=[Depends(get_admin)])
+app.include_router(daily_reports_router.router, dependencies=[Depends(get_admin)])
+
     
 @app.get("/")
 def read_root():

@@ -1,19 +1,23 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
-from beanie import Document, PydanticObjectId
+from beanie import Document
 
 
 # User model
 class User(BaseModel):
     email : EmailStr
     hashed_password : str
-    
-class UserInDB(User):
-    id : PydanticObjectId = Field(default_factory=PydanticObjectId, alias="_id")
-
+    role : str
+        
     class Congig:
         orm_mode = True
+        
+        
+
+class Login:
+    username : str
+    password : str
     
         
 

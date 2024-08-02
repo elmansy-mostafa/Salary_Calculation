@@ -1,10 +1,16 @@
-from fastapi import HTTPException, status
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
-from Salary_Calculation.schemas import TokenData
+from Salary_Calculation.shared.models_schemas.schemas import TokenData
+from Salary_Calculation.shared.models_schemas.models import User
 
+
+exception_error = HTTPException(status_code= status.HTTP_401_UNAUTHORIZED, 
+                        detail="could not validate credentials",
+                        headers={"WWW-Authenticate": "Bearer"},)
 
 
 # secret key for JWT
@@ -36,11 +42,19 @@ def decode_access_token(token:str) -> TokenData:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email : str = payload.get("sub")
-        if not email:
+        role : str = payload.get("role")
+        if not email or not role:
             raise JWTError
-        return TokenData(email=email)
+        token_data = TokenData(email=email, role=role)
     except JWTError:
-        raise HTTPException(status_code= status.HTTP_401_UNAUTHORIZED, 
-                        detail="could not validate credentials",
-                        headers={"WWW-Authenticate": "Bearer"},)
+        raise exception_error
+    return token_data
         
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+async def get_current_user(token:str = Depends(oauth2_scheme)):
+    try:
+        return decode_access_token(token)
+    except JWTError:
+        raise exception_error
