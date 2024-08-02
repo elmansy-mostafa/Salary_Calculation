@@ -1,15 +1,20 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
 from Salary_Calculation.shared.models_schemas.models import DailyReport, Employee, User
+import os
+from dotenv import load_dotenv
 # from Salary_Calculation.config.settings import settings
 
-
+dotenv_path = os.path.join(os.path.dirname(__file__), '..', 'env', '.env')
+load_dotenv(dotenv_path)
 
 # creating a client instance to interact with mongodb
-client = AsyncIOMotorClient("mongodb://localhost:27017")
+DATABASE_URL = os.getenv("DATABASE_URL")
+client = AsyncIOMotorClient(DATABASE_URL)
 
 # specifying database within mongodb
-database = client.db_user
+DATABASE_NAME = os.getenv("DATABASE_NAME")
+database = client.DATABASE_NAME
 
 # defining collections within database
 employee_collection = database.get_collection("employees")

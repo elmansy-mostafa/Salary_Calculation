@@ -13,7 +13,7 @@ class User(BaseModel):
     class Congig:
         orm_mode = True
         
-        
+
 
 class Login:
     username : str
