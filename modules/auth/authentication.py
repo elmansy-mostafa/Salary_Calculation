@@ -1,11 +1,11 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
 from Salary_Calculation.shared.models_schemas.schemas import TokenData
-from Salary_Calculation.shared.models_schemas.models import User
+from Salary_Calculation.config.database.database import user_collection
 
 
 exception_error = HTTPException(status_code= status.HTTP_401_UNAUTHORIZED, 
@@ -17,6 +17,7 @@ exception_error = HTTPException(status_code= status.HTTP_401_UNAUTHORIZED,
 SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+REFRESH_TOKEN_ECPIRE_DAYS = 7
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -30,13 +31,24 @@ def get_password_hash(password:str) -> str:
 def create_access_token(data:dict, expire_delta:Optional[timedelta] = None):
     to_encode = data.copy()
     if expire_delta:
-        expire = datetime.utcnow() + expire_delta
+        expire = datetime.now(timezone.utc) + expire_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     
     to_encode.update({"exp":expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+def create_refresh_token(data:dict, expire_delta:Optional[timedelta] = None):
+    to_encode = data.copy()
+    if expire_delta:
+        expire = datetime.now(timezone.utc) + expire_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(minutes=REFRESH_TOKEN_ECPIRE_DAYS)
+    
+    to_encode.update({"exp":expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt   
 
 def decode_access_token(token:str) -> TokenData:
     try:
@@ -55,6 +67,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 async def get_current_user(token:str = Depends(oauth2_scheme)):
     try:
-        return decode_access_token(token)
+        token_data =  decode_access_token(token)
     except JWTError:
         raise exception_error
+    
+    user = await user_collection.find_one({"email":token_data.email})
+    if user is None:
+        raise exception_error
+    return user

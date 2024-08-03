@@ -4,12 +4,11 @@ from Salary_Calculation.modules.employees import employees_router
 from Salary_Calculation.modules.daily_reports import daily_reports_router
 from Salary_Calculation.modules.auth.authorizations import get_admin
 
-# from Salary_Calculation.database import init as init_db
 
 app = FastAPI()
 
 
-    
+
 app.include_router(users_router.router)
 app.include_router(employees_router.router, dependencies=[Depends(get_admin)])
 app.include_router(daily_reports_router.router, dependencies=[Depends(get_admin)])

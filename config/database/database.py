@@ -3,7 +3,7 @@ from beanie import init_beanie
 from Salary_Calculation.shared.models_schemas.models import DailyReport, Employee, User
 import os
 from dotenv import load_dotenv
-# from Salary_Calculation.config.settings import settings
+
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '..', 'env', '.env')
 load_dotenv(dotenv_path)
