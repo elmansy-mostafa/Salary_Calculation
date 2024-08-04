@@ -4,9 +4,13 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from Salary_Calculation.shared.models_schemas.schemas import TokenData
-from Salary_Calculation.config.database.database import user_collection
+from dotenv import load_dotenv
+import os
 
+dotenv_path = os.path.join(os.path.dirname(__file__), '..', 'env', '.env')
+load_dotenv(dotenv_path)
 
 exception_error = HTTPException(status_code= status.HTTP_401_UNAUTHORIZED, 
                         detail="could not validate credentials",
@@ -14,7 +18,7 @@ exception_error = HTTPException(status_code= status.HTTP_401_UNAUTHORIZED,
 
 
 # secret key for JWT
-SECRET_KEY = "your_secret_key"
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_ECPIRE_DAYS = 7
@@ -62,16 +66,27 @@ def decode_access_token(token:str) -> TokenData:
         raise exception_error
     return token_data
         
+        
+def create_verification_token(email:str) ->str:
+    expire = datetime.now(timezone.utc) + timedelta(hours=1)
+    to_encode = {"email":email, "exp":expire}
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+def decode_verification_token(token:str) -> str:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload.get("email")
+    except ExpiredSignatureError:
+        raise HTTPException(status_code=400, detail="Token expired")
+    except InvalidTokenError:
+        raise HTTPException(status_code=400, detail=" Invalid token")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 async def get_current_user(token:str = Depends(oauth2_scheme)):
     try:
-        token_data =  decode_access_token(token)
+        return decode_access_token(token)
     except JWTError:
         raise exception_error
     
-    user = await user_collection.find_one({"email":token_data.email})
-    if user is None:
-        raise exception_error
-    return user

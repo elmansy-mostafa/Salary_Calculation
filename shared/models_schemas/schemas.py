@@ -4,16 +4,16 @@ from datetime import datetime
 
 
 # user model schemas 
-
-class UserCreate(BaseModel):
+class UserBase(BaseModel):
     email : EmailStr
+    role : str
+
+class UserCreate(UserBase):
     password : str
-    role : str
 
-class UserRead(BaseModel):
-    id : str
-    email : EmailStr
-    role : str
+class USerInDB(UserBase):
+    hashed_password : str
+    is_verified :bool = False
 
 
 class Token(BaseModel):
@@ -24,10 +24,14 @@ class Token(BaseModel):
 class TokenRefresh(BaseModel):
     refresh_token : str
     
+
     
 class TokenData(BaseModel):
     email : Optional[str] = None
     role : Optional[str] = None
+    
+class SignupResponse(BaseModel):
+    msg :str
 
 
 #Adherance model

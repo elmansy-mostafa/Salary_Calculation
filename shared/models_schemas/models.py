@@ -9,6 +9,7 @@ class User(BaseModel):
     email : EmailStr
     hashed_password : str
     role : str
+    is_verified : bool = False
         
     class Congig:
         orm_mode = True
@@ -75,3 +76,5 @@ class SalaryCalculator:
             total_compensation += report.time_extension.price or 0
         return base_salary + total_compensation - total_deductions
         
+        
+
