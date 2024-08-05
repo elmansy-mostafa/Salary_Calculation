@@ -6,11 +6,8 @@ from typing import Optional
 from jose import JWTError, jwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from Salary_Calculation.shared.models_schemas.schemas import TokenData
-from dotenv import load_dotenv
-import os
+import secrets
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '..', 'env', '.env')
-load_dotenv(dotenv_path)
 
 exception_error = HTTPException(status_code= status.HTTP_401_UNAUTHORIZED, 
                         detail="could not validate credentials",
@@ -18,7 +15,7 @@ exception_error = HTTPException(status_code= status.HTTP_401_UNAUTHORIZED,
 
 
 # secret key for JWT
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = secrets.token_urlsafe(32)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_ECPIRE_DAYS = 7

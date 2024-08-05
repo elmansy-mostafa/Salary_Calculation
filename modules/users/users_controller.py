@@ -7,13 +7,9 @@ from .users_crud import create_user, get_user_by_email, get_all_user
 from Salary_Calculation.config.mailer.email import send_verification_email
 from Salary_Calculation.shared.models_schemas.schemas import TokenData, UserCreate, TokenRefresh
 from Salary_Calculation.modules.auth.authentication import create_access_token, verify_password, create_refresh_token, create_verification_token, decode_verification_token
-from dotenv import load_dotenv
-import os
+import secrets
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '..', 'env', '.env')
-load_dotenv(dotenv_path)
-
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = secrets.token_urlsafe(32)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_ECPIRE_DAYS = 7
@@ -61,7 +57,7 @@ async def refresh_access_token(token_refresh:TokenRefresh):
     try:
         payload = jwt.decode(token_refresh.refresh_token, SECRET_KEY, algorithms=[ALGORITHM])
         email : str = payload.get("sub")
-        role : str = payload.get("sub")
+        role : str = payload.get("role")
         if not email or not role:
             raise exception_error
         token_data = TokenData(email=email, role=role)
