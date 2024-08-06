@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 
@@ -82,7 +82,7 @@ class EmployeeResponse(EmployeeInDB):
     
 # Employee list response schema
 class EmployeeListResponse(BaseModel):
-    employee : list[EmployeeResponse]
+    employee : List[EmployeeResponse]
     
 
 # dailyreport model
