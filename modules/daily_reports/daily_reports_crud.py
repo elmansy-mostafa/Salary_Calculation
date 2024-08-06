@@ -38,7 +38,7 @@ async def get_all_daily_reports() -> List[DailyReport]:
     return [DailyReport(**report_data) for report_data in reports]
 
 # get dailyreport by specific employee and range date
-async def get_daily_reports_by_employee_and_range_date(employee_id:int, start_date:Optional[datetime], end_date:Optional[datetime]) -> list[DailyReport]:
+async def get_daily_reports_by_employee_and_range_date(employee_id:int, start_date:Optional[datetime], end_date:Optional[datetime]) -> List[DailyReport]:
     query = {"employee_id" : employee_id}
     if start_date and end_date:
         query["date"] = {"$gte":start_date, "$lte":end_date}
