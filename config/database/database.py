@@ -1,6 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
-from Salary_Calculation.shared.models_schemas.models import DailyReport, Employee, User
+from shared.models_schemas.models import DailyReport, Employee, User
 import os
 from dotenv import load_dotenv
 

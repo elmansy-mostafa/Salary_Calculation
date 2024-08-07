@@ -1,7 +1,7 @@
 from datetime import datetime
 from fastapi import APIRouter
 from typing import List, Optional
-from Salary_Calculation.shared.models_schemas.schemas import DailyReportCreate, DailyReportUpdate, DailyReportResponse
+from shared.models_schemas.schemas import DailyReportCreate, DailyReportUpdate, DailyReportResponse
 from .daily_router_controller import create_daily_report_control, get_daily_report_control, update_daily_report_control, delete_daily_report_control, get_all_daily_reports_control, get_daily_reports_by_employee_and_renage_date_control, get_daily_report_salary_control
 
 

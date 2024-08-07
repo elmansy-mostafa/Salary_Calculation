@@ -1,6 +1,6 @@
 from fastapi import Depends, HTTPException
 from .authentication import get_current_user
-from Salary_Calculation.shared.models_schemas.models import User
+from shared.models_schemas.models import User
 
 exception_error = HTTPException(status_code=403, detail="not enough permissions")
 

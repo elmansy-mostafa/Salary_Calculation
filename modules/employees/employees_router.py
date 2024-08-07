@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from typing import List
-from Salary_Calculation.shared.models_schemas.schemas import EmployeeCreate, EmployeeUpdate, EmployeeResponse, DailyReportCreate, DailyReportUpdate, DailyReportResponse
+from shared.models_schemas.schemas import EmployeeCreate, EmployeeUpdate, EmployeeResponse, DailyReportCreate, DailyReportUpdate, DailyReportResponse
 from .employees_controller import create_employee_control, get_employee_control, update_employee_control, delete_employee_control, get_all_employees_control
 
 

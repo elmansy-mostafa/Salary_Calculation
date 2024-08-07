@@ -1,9 +1,9 @@
 from typing import List
 from fastapi import HTTPException
-from Salary_Calculation.shared.models_schemas.models import User
-from Salary_Calculation.config.database.database import user_collection
-from Salary_Calculation.shared.models_schemas.schemas import UserCreate, USerInDB
-from Salary_Calculation.modules.auth.authentication import get_password_hash
+from shared.models_schemas.models import User
+from config.database.database import user_collection
+from shared.models_schemas.schemas import UserCreate, USerInDB
+from modules.auth.authentication import get_password_hash
 
 
 # CRUD operations for User

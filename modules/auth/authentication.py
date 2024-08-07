@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
-from Salary_Calculation.shared.models_schemas.schemas import TokenData
+from shared.models_schemas.schemas import TokenData
 import secrets
 
 

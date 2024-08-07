@@ -1,6 +1,6 @@
 from typing import Optional, List
-from Salary_Calculation.shared.models_schemas.models import Employee
-from Salary_Calculation.config.database.database import employee_collection
+from shared.models_schemas.models import Employee
+from config.database.database import employee_collection
 
 
 

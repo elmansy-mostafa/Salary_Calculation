@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Depends
-from Salary_Calculation.modules.users import users_router
-from Salary_Calculation.modules.employees import employees_router
-from Salary_Calculation.modules.daily_reports import daily_reports_router
-from Salary_Calculation.modules.auth.authorizations import get_admin
+from modules.users import users_router
+from modules.employees import employees_router
+from modules.daily_reports import daily_reports_router
+from modules.auth.authorizations import get_admin
 
 
 app = FastAPI()

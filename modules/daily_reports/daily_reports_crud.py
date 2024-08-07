@@ -1,7 +1,7 @@
 from typing import Optional, List
 from datetime import datetime
-from Salary_Calculation.shared.models_schemas.models import DailyReport, SalaryCalculator
-from Salary_Calculation.config.database.database import daily_report_collection
+from shared.models_schemas.models import DailyReport, SalaryCalculator
+from config.database.database import daily_report_collection
 
 
 

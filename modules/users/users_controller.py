@@ -1,12 +1,12 @@
 from fastapi import HTTPException, status
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
-from Salary_Calculation.shared.models_schemas.models import Login
-from Salary_Calculation.config.database.database import user_collection
+from shared.models_schemas.models import Login
+from config.database.database import user_collection
 from .users_crud import create_user, get_user_by_email, get_all_user
-from Salary_Calculation.config.mailer.email import send_verification_email
-from Salary_Calculation.shared.models_schemas.schemas import TokenData, UserCreate, TokenRefresh
-from Salary_Calculation.modules.auth.authentication import create_access_token, verify_password, create_refresh_token, create_verification_token, decode_verification_token
+from config.mailer.email import send_verification_email
+from shared.models_schemas.schemas import TokenData, UserCreate, TokenRefresh
+from modules.auth.authentication import create_access_token, verify_password, create_refresh_token, create_verification_token, decode_verification_token
 import secrets
 
 SECRET_KEY = secrets.token_urlsafe(32)

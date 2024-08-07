@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from Salary_Calculation.shared.models_schemas.schemas import Token, TokenRefresh, UserCreate, SignupResponse
-from Salary_Calculation.shared.models_schemas.models import User
-from Salary_Calculation.modules.auth.authorizations import get_admin, get_superadmin
+from shared.models_schemas.schemas import Token, TokenRefresh, UserCreate, SignupResponse
+from shared.models_schemas.models import User
+from modules.auth.authorizations import get_admin, get_superadmin
 from .users_controller import signup, login, get_users, refresh_access_token, verify_email, delete_user
 from typing import List
 

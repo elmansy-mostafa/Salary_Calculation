@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from .employees_crud import  create_employee, get_employee, update_employee, delete_employee, get_all_employee
-from Salary_Calculation.shared.models_schemas.schemas import EmployeeCreate, EmployeeUpdate
+from shared.models_schemas.schemas import EmployeeCreate, EmployeeUpdate
 
 exception_error = HTTPException(status_code=404, detail="Employee not found")
 

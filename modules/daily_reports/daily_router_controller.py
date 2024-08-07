@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from typing import Optional
 from datetime import datetime
 from .daily_reports_crud import create_daily_report, update_daily_report, get_daily_report, delete_daily_report, get_all_daily_reports, get_daily_reports_by_employee_and_range_date, calculate_daily_report_salary
-from Salary_Calculation.shared.models_schemas.schemas import DailyReportCreate, DailyReportUpdate
+from shared.models_schemas.schemas import DailyReportCreate, DailyReportUpdate
 
 
 exception_error = HTTPException(status_code=404, detail="Daily report not found")
