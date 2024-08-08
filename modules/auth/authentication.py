@@ -6,7 +6,6 @@ from typing import Optional
 from jose import JWTError, jwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from shared.models_schemas.schemas import TokenData
-import secrets
 
 
 exception_error = HTTPException(status_code= status.HTTP_401_UNAUTHORIZED, 
@@ -15,7 +14,7 @@ exception_error = HTTPException(status_code= status.HTTP_401_UNAUTHORIZED,
 
 
 # secret key for JWT
-SECRET_KEY = secrets.token_urlsafe(32)
+SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_ECPIRE_DAYS = 7

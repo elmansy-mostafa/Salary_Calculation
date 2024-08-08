@@ -7,9 +7,8 @@ from .users_crud import create_user, get_user_by_email, get_all_user
 from config.mailer.email import send_verification_email
 from shared.models_schemas.schemas import TokenData, UserCreate, TokenRefresh
 from modules.auth.authentication import create_access_token, verify_password, create_refresh_token, create_verification_token, decode_verification_token
-import secrets
 
-SECRET_KEY = secrets.token_urlsafe(32)
+SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_ECPIRE_DAYS = 7
