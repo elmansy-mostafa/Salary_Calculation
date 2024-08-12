@@ -1,0 +1,32 @@
+# Python byte-code
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyx
+*.so
+
+# Distribution / packaging
+.eggs/
+*.egg-info/
+dist/
+build/
+develop-eggs/
+venv/
+
+# IDE/editor specific
+.vscode/
+src/config/env/.env
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Tests
+.pytest_cache/
+coverage/
+
+# Sphinx documentation
+docs/_build/
+
+# Local configuration
+local_settings.py
