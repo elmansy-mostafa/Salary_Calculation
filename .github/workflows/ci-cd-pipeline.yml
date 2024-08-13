@@ -1,3 +1,4 @@
+
 name: CI/CD Pipeline
 
 on:
@@ -11,6 +12,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
 
     steps:
     - name: Checkout Code
@@ -30,11 +37,14 @@ jobs:
       run: |
         pytest
 
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
     - name: Build Docker image
-      run: |
-        docker build -t salary_calculation_app:latest .
-        docker tag salary_calculation_app:latest mostafa9811/salary_calculation_app:latest
-        docker push mostafa9811/salary_calculation_app:latest
+      run: docker build -t mostafa9811/salary_calculation_app .
+
+    - name: Push Docker image to Docker Hub
+      run: docker push mostafa9811/salary_calculation_app
 
   deploy:
     needs: build
@@ -46,13 +56,11 @@ jobs:
 
     - name: Deploy to Server
       run: |
-        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} root@176.57.184.164 '
-          docker pull mostafa9811/salary_calculation_app:latest &&
-          docker-compose down &&
-          docker-compose up -d
-        '
+        ssh root@176.57.184.164 'docker pull mostafa9811/salary_calculation_app:latest && docker-compose up -d'
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
     - name: Notify Deployment
       run: echo "Deployment finished successfully."
