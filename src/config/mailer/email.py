@@ -19,11 +19,13 @@ conf = ConnectionConfig(
     VALIDATE_CERTS=True,
     )
 
+BASE_URL=os.getenv("BASE_URL")
+
 async def send_verification_email(email:str, token:str):
     message = MessageSchema(
         subject = "Verify your email",
         recipients = [email],
-        body = f"Please verify your emali by clicking the following link:BASE_URL/verify_email/{token}",
+        body = f"Please verify your emali by clicking the following link:{BASE_URL}/verify_email/{token}",
         subtype = "html"
     )
     fm = FastMail(conf)

@@ -1,5 +1,4 @@
 from typing import List
-from fastapi import HTTPException
 from shared.models_schemas.models import User
 from config.database.database import user_collection
 from shared.models_schemas.schemas import UserCreate, USerInDB
@@ -19,7 +18,7 @@ async def create_user(user:UserCreate) -> User:
     return db_user
 
 async def get_user_by_email(email:str) -> User:
-    user_data =  await user_collection.find_one({"email":email}) 
+    user_data = await user_collection.find_one({"email":email}) 
     if user_data:
         return User(**user_data)
     return None

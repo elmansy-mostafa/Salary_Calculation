@@ -90,7 +90,7 @@ async def verify_email(token:str):
     if not email:
         raise HTTPException(status_code=400, detail="Invalid or expire token")
         
-    result = await user_collection.update_one({"email":email}, {"$set":{"is_verified":True}})
+    result =  await user_collection.update_one({"email":email}, {"$set":{"is_verified":True}})
     if result.matched_count==0:
         raise HTTPException(status_code=400, detail="User not found")
 
