@@ -32,7 +32,9 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t salary_calculation_app .
+        docker build -t salary_calculation_app:latest .
+        docker tag salary_calculation_app:latest mostafa9811/salary_calculation_app:latest
+        docker push mostafa9811/salary_calculation_app:latest
 
   deploy:
     needs: build
@@ -44,12 +46,13 @@ jobs:
 
     - name: Deploy to Server
       run: |
-        ssh root@176.57.184.164 'docker pull your-repo/salary_calculation_app:latest && docker-compose up -d'
-
+        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} root@176.57.184.164 '
+          docker pull mostafa9811/salary_calculation_app:latest &&
+          docker-compose down &&
+          docker-compose up -d
+        '
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
     - name: Notify Deployment
       run: echo "Deployment finished successfully."
