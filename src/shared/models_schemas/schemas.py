@@ -11,7 +11,7 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password : str
 
-class USerInDB(UserBase):
+class UserInDB(UserBase):
     hashed_password : str
     is_verified :bool = False
 

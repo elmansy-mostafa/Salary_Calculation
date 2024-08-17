@@ -3,11 +3,10 @@ from shared.models_schemas.models import Employee
 from config.database.database import employee_collection
 
 
-
 # CRUD operations for employee
 
 async def create_employee(employee : Employee) -> Employee:
-    employee_dict = employee.dict()
+    employee_dict = employee.model_dump()
     await employee_collection.insert_one(employee_dict)
     return employee
 

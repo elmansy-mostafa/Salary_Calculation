@@ -16,4 +16,4 @@ app.include_router(daily_reports_router.router, dependencies=[Depends(get_admin)
     
 @app.get("/")
 def read_root():
-    return {"message: salary calculation system"}
+    return {"message": "Hello, salary_calculation!"}
