@@ -33,7 +33,16 @@ jobs:
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$(pwd)/src" >> $GITHUB_ENV
 
-    - name: Run Tests
+    - name: Run tests
+      env:
+        DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+        MONGO_URI: ${{ secrets.MONGO_URI }}
+        MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+        MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+        MAIL_FROM: ${{ secrets.MAIL_FROM }}
+        MAIL_PORT: ${{ secrets.MAIL_PORT }}
+        MAIL_SERVER: ${{ secrets.MAIL_SERVER }}
+        BASE_URL: ${{ secrets.BASE_URL }}
       run: |
         pytest
 
