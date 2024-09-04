@@ -19,7 +19,7 @@ async def get_employee_endpoint(employee_id:int):
 
 
 @router.put("/employees/{employee_id}", response_model=EmployeeResponse)
-async def update_employee_endpoint(employee_id:int, employee_update:EmployeeUpdate):
+async def update_employee_endpoint(employee_id:int, employee_update:dict):
     return await update_employee_control(employee_id, employee_update)
 
 
@@ -30,4 +30,5 @@ async def delete_employee_endpoint(employee_id:int):
 
 @router.get("/employees", response_model=List[EmployeeResponse])
 async def get_all_employees_endpoint():
-    return await get_all_employees_control()
+    employees = await get_all_employees_control()
+    return employees

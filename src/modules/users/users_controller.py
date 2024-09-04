@@ -7,6 +7,13 @@ from .users_crud import create_user, get_user_by_email, get_all_user
 from config.mailer.email import send_verification_email
 from shared.models_schemas.schemas import TokenData, UserCreate, TokenRefresh
 from modules.auth.authentication import create_access_token, verify_password, create_refresh_token, create_verification_token, decode_verification_token
+import os
+from dotenv import load_dotenv
+
+
+dotenv_path = os.path.join(os.path.dirname(__file__), '..', 'config', 'env', '.env')
+load_dotenv(dotenv_path)
+
 
 SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
@@ -98,13 +105,18 @@ async def verify_email(token:str):
 
 
 
-async def delete_user(email:str):
-    result = await user_collection.delete_one({"email":email})
+async def delete_user(email: str):
+    if os.getenv("TESTING") == "True":
+        result = user_collection.delete_one({"email": email})
+    else:
+        result = await user_collection.delete_one({"email": email})
+
     if result.deleted_count == 0:
         raise HTTPException(status_code=400, detail="User not found")
-    return {"message":"User deleted successfully"}  
+        
+    return {"message": "User deleted successfully"}
 
 
-async def get_users():
+async def get_all_users():
     users = await get_all_user()
     return users

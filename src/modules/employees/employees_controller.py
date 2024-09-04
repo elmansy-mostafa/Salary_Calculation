@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from .employees_crud import  create_employee, get_employee, update_employee, delete_employee, get_all_employee
-from shared.models_schemas.schemas import EmployeeCreate, EmployeeUpdate
+from shared.models_schemas.schemas import EmployeeCreate
 
 exception_error = HTTPException(status_code=404, detail="Employee not found")
 
@@ -16,8 +16,8 @@ async def get_employee_control(employee_id:int):
     return employee
 
 
-async def update_employee_control(employee_id:int, employee_update:EmployeeUpdate):
-    updated_employee = await update_employee(employee_id, employee_update.dict(exclude_unset=True))
+async def update_employee_control(employee_id:int, employee_update:dict):
+    updated_employee = await update_employee(employee_id, employee_update)
     if not updated_employee:
         raise exception_error
     return updated_employee

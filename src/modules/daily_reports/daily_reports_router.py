@@ -2,7 +2,7 @@ from datetime import datetime
 from fastapi import APIRouter
 from typing import List, Optional
 from shared.models_schemas.schemas import DailyReportCreate, DailyReportUpdate, DailyReportResponse
-from .daily_router_controller import create_daily_report_control, get_daily_report_control, update_daily_report_control, delete_daily_report_control, get_all_daily_reports_control, get_daily_reports_by_employee_and_renage_date_control, get_daily_report_salary_control
+from .daily_reports_controller import create_daily_report_control, get_daily_report_control, update_daily_report_control, delete_daily_report_control, get_all_daily_reports_control, get_daily_reports_by_employee_and_renage_date_control, get_daily_report_salary_control
 
 
 router = APIRouter()
@@ -22,7 +22,7 @@ async def get_daily_report_endpoint(employee_id:int, report_date:datetime):
 
         
 @router.put("/daily_reports/{employee_id}/daily_reports/{report_date}", response_model=DailyReportResponse)
-async def update_daily_report_endpoint(employee_id:int, report_date:datetime, update_report:DailyReportUpdate):
+async def update_daily_report_endpoint(employee_id:int, report_date:datetime, update_report:dict):
     return await update_daily_report_control(employee_id, report_date,update_report) 
 
 @router.delete("/daily_reports/{employee_id}/daily_reports/{report_date}", response_model=bool)

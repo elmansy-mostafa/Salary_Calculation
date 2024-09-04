@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from shared.models_schemas.schemas import Token, TokenRefresh, UserCreate, SignupResponse
 from shared.models_schemas.models import User
 from modules.auth.authorizations import get_admin, get_superadmin
-from .users_controller import signup, login, get_users, refresh_access_token, verify_email, delete_user
+from .users_controller import signup, login, get_all_users, refresh_access_token, verify_email, delete_user
 from typing import List
 
 router = APIRouter()
@@ -30,5 +30,5 @@ async def delete_user_endpoint(email:str):
     return await delete_user(email)
 
 @router.get("/users", response_model=List[User], dependencies=[Depends(get_admin)])
-async def get_users_endpoints():
-    return await get_users()
+async def get_all_users_endpoints():
+    return await get_all_users()
