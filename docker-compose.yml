@@ -3,14 +3,19 @@ services:
     image: mostafa9811/salary_calculation_app:latest
     ports:
       - "8000:8000"
+    environment:
+      DATABASE_NAME: ${DATABASE_NAME}
+      MONGO_URI: ${MONGO_URI}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_FROM: ${MAIL_FROM}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_SERVER: ${MAIL_SERVER}
+      TESTING: ${TESTING}
     depends_on:
       - mongo
-    environment:
-      - MONGO_URI=mongodb://mongodb-container:27017
-      - DATABASE_NAME=db_user
   mongo:
     image: mongo:latest
-    container_name: mongodb-container
     ports:
       - "27017:27017"
     volumes:
