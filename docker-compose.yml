@@ -1,5 +1,13 @@
-#remove version
 services:
+  app:
+    image: mostafa9811/salary_calculation_app:latest
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongodb-container:27017
+      - DATABASE_NAME=db_user
   mongo:
     image: mongo:latest
     container_name: mongodb-container
@@ -7,18 +15,6 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
-    depends_on:
-      - mongo
-    environment:
-      - MONGO_URI=mongodb://mongodb-container:27017
-      - DATABASE_NAME=db_user  
 
 volumes:
   mongo_data:

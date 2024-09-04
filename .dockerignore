@@ -7,7 +7,6 @@ pycache/
 
 # Ignore virtual environments
 venv/
-env/
 .venv/
 
 # Ignore environment variables file

@@ -16,7 +16,6 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 
 # 6. Copy the entire project into the container
 COPY src/ /app/src/
-
 # RUN pytest
 
 # 7. Expose the port FastAPI will run on
