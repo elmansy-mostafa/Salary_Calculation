@@ -75,7 +75,7 @@ jobs:
 
     - name: Deploy to Server
       run: |
-        ssh root@176.57.184.164 'docker pull mostafa9811/salary_calculation_app:latest && docker-compose up -d'
-
+        ssh root@176.57.184.164 'cd /home/root/Salary_Calculation && docker pull mostafa9811/salary_calculation_app:latest && docker-compose up -d'
+    
     - name: Notify Deployment
       run: echo "Deployment finished successfully."
