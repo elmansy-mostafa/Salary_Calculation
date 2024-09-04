@@ -42,7 +42,7 @@ jobs:
         MAIL_FROM: ${{ secrets.MAIL_FROM }}
         MAIL_PORT: ${{ secrets.MAIL_PORT }}
         MAIL_SERVER: ${{ secrets.MAIL_SERVER }}
-        BASE_URL: ${{ secrets.BASE_URL }}
+        TESTING: ${{ secrets.TESTING }}
       run: |
         pytest
 
