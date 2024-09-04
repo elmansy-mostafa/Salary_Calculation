@@ -48,12 +48,12 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t mostafa9811/salary_calculation_app:latest .
+        docker build -t mostafa9811/salary_calculation_app-1:latest .
       
     - name: Push Docker image
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker push mostafa9811/salary_calculation_app:latest
+        docker push mostafa9811/salary_calculation_app-1:latest
         
   deploy:
     needs: build
@@ -81,6 +81,6 @@ jobs:
           docker-compose down
           docker-compose up --build -d
         EOF
-        
+
     - name: Notify Deployment
       run: echo "Deployment finished successfully."
