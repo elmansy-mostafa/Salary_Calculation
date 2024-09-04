@@ -14,7 +14,7 @@ from src.modules.users.users_router import get_all_users_endpoints, login_endpoi
 from src.shared.models_schemas.models import Login, User
 from src.shared.models_schemas.schemas import UserCreate
 
-.
+
 client = TestClient(app)
 
 # Helper function to create a mock MongoDB client and collection
