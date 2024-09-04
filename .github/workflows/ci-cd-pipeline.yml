@@ -63,14 +63,19 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.6.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Add SSH Host Key
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan 176.57.184.164 >> ~/.ssh/known_hosts
+
     - name: Deploy to Server
       run: |
         ssh root@176.57.184.164 'docker pull mostafa9811/salary_calculation_app:latest && docker-compose up -d'
-
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
     - name: Notify Deployment
       run: echo "Deployment finished successfully."
