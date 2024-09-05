@@ -23,14 +23,30 @@ def get_mock_collection():
 # Helper function to prepare test daily_report data
 def get_test_daily_report_data():
     return  {
-            "date": datetime(2024, 8, 16).isoformat(),
-            "employee_id": 1,
-            "adherance": {"status": True},
-            "appointment": {"no_of_qualified_appointment": 5, "no_of_not_qualified_appointment": 3},
-            "compensation": {"spiffs": 500.0, "commissisons": 150.0},
-            "time_extension": {"has_time_extended": True, "price": 100.0},
-            "deductions": {"deductions": 50.0}
-        }
+        "date": datetime(2023, 1, 1).isoformat(),
+        "employee_id": 1,
+        "appointment": {
+            "no_of_qualified_appointment": 5,
+            "no_of_not_qualified_appointment": 2
+        },
+        "compensation": {
+            "spiffs": 150,
+            "kpis": 500,
+            "butter_up": 5
+        },
+        "deductions": {
+            "deductions": 50,
+            "reason": "looser"
+        },
+        "allowance": {
+            "allowance_type": "test",
+            "allowance_value": 100
+        },
+        "adherence_status": True,
+        "total_salary": 1550,
+        "is_saturday": True,
+        "working_hours": 7
+    }
 
 # test for create daily_report
 @pytest.mark.asyncio
@@ -97,11 +113,14 @@ async def test_create_daily_report_endpoint():
             response_json = response.json()
             assert response_json['date'] == test_daily_report.date.isoformat()
             assert response_json['employee_id'] == test_daily_report.employee_id
-            assert response_json['adherance'] == test_daily_report.adherance.model_dump()
+            assert response_json['adherence_status'] == test_daily_report.adherence_status
             assert response_json['appointment'] == test_daily_report.appointment.model_dump()
             assert response_json['compensation'] == test_daily_report.compensation.model_dump()
-            assert response_json['time_extension'] == test_daily_report.time_extension.model_dump()
+            assert response_json['allowance'] == test_daily_report.allowance.model_dump()
             assert response_json['deductions'] == test_daily_report.deductions.model_dump()
+            assert response_json['total_salary'] == test_daily_report.total_salary
+            assert response_json['is_saturday'] == test_daily_report.is_saturday
+            assert response_json['working_hours'] == test_daily_report.working_hours
 
 
 # test for get daily_report
@@ -177,11 +196,14 @@ async def test_get_daily_report_endpoint():
             response_json = response.json()
             assert response_json['date'] == test_daily_report.date.isoformat()
             assert response_json['employee_id'] == test_daily_report.employee_id
-            assert response_json['adherance'] == test_daily_report.adherance.model_dump()
+            assert response_json['adherence_status'] == test_daily_report.adherence_status
             assert response_json['appointment'] == test_daily_report.appointment.model_dump()
             assert response_json['compensation'] == test_daily_report.compensation.model_dump()
-            assert response_json['time_extension'] == test_daily_report.time_extension.model_dump()
+            assert response_json['allowance'] == test_daily_report.allowance.model_dump()
             assert response_json['deductions'] == test_daily_report.deductions.model_dump()
+            assert response_json['total_salary'] == test_daily_report.total_salary
+            assert response_json['is_saturday'] == test_daily_report.is_saturday
+            assert response_json['working_hours'] == test_daily_report.working_hours
 
 # test for update daily_report
 @pytest.mark.asyncio
@@ -189,7 +211,7 @@ async def test_update_daily_report():
     # Prepare test data
     test_daily_report_data = get_test_daily_report_data()
     test_daily_report = DailyReport(**test_daily_report_data)
-    update_data = {"deductions": {"deductions":100.0}}
+    update_data = {"total_salary": 2000}
 
     # Create a mock MongoDB collection
     mock_collection = MagicMock()
@@ -208,8 +230,7 @@ async def test_update_daily_report():
         assert result is not None, "Expected an daily_report instance, but got None"
         assert result.employee_id == test_daily_report.employee_id
         assert result.date == test_daily_report.date
-        expected_deductions = Deduction(deductions=100.0)
-        assert result.deductions.deductions == expected_deductions.deductions  # Updated attribute
+        assert result.total_salary == 2000  # Updated attribute
 
 
     # Patch the daily_report_collection used in update_daily_report
@@ -231,7 +252,7 @@ async def test_update_daily_report_control():
     test_daily_report_data = get_test_daily_report_data()
     test_daily_report_data['deductions'] = {"deductions":100.0}
     test_daily_report = DailyReport(**test_daily_report_data)
-    update_data = {"deductions": {"deductions":100.0}}
+    update_data = {"total_salary": 2000}
 
     # Patch update_daily_report
     with patch('src.modules.daily_reports.daily_reports_controller.update_daily_report', AsyncMock(return_value=test_daily_report)):
@@ -241,8 +262,7 @@ async def test_update_daily_report_control():
         assert result is not None, "Expected an daily_report instance, but got None"
         assert result.employee_id == test_daily_report.employee_id
         assert result.date == test_daily_report.date
-        expected_deductions = Deduction(deductions=100.0)
-        assert result.deductions.deductions == expected_deductions.deductions  # Updated attribute
+        assert result.total_salary == 2000  # Updated attribute
 
 
 # Test for update_daily_report_endpoint
@@ -252,7 +272,7 @@ async def test_update_daily_report_endpoint():
     test_daily_report_data = get_test_daily_report_data()
     test_daily_report_data['deductions'] = {"deductions":100.0}
     test_daily_report = DailyReportResponse(**test_daily_report_data)
-    update_data = {"deductions": {"deductions":100.0}}
+    update_data = {"total_salary": 2000}
 
     # Mock the update_daily_report_control function to return a test employee
     with patch('src.modules.daily_reports.daily_reports_controller.update_daily_report_control', AsyncMock(return_value=test_daily_report)):
@@ -272,7 +292,7 @@ async def test_update_daily_report_endpoint():
             assert response.status_code == 200
             response_json = response.json()
             assert response_json['employee_id'] == test_daily_report.employee_id
-            assert response_json['deductions'] == update_data['deductions']
+            assert response_json['total_salary'] == update_data['total_salary']
     
         
 # test foe delete daily_report
@@ -359,23 +379,55 @@ async def test_delete_daily_report_endpoint():
 def get_test_data():
     return [
         {
-            "date": datetime(2024, 8, 16),
-            "employee_id": 1,
-            "adherance": {"status": True},
-            "appointment": {"no_of_qualified_appointment": 5, "no_of_not_qualified_appointment": 3},
-            "compensation": {"spiffs": 500.0, "commissisons": 150.0},
-            "time_extension": {"has_time_extended": True, "price": 100.0},
-            "deductions": {"deductions": 50.0}
+        "date": datetime(2023, 1, 1).isoformat(),
+        "employee_id": 1,
+        "appointment": {
+            "no_of_qualified_appointment": 5,
+            "no_of_not_qualified_appointment": 2
         },
+        "compensation": {
+            "spiffs": 150,
+            "kpis": 500,
+            "butter_up": 5
+        },
+        "deductions": {
+            "deductions": 50,
+            "reason": "looser"
+        },
+        "allowance": {
+            "allowance_type": "test",
+            "allowance_value": 100
+        },
+        "adherence_status": True,
+        "total_salary": 1550,
+        "is_saturday": True,
+        "working_hours": 7
+    },
         {
-            "date": datetime(2024, 8, 17),
-            "employee_id": 2,
-            "adherance": {"status": False},
-            "appointment": {"no_of_qualified_appointment": 3, "no_of_not_qualified_appointment": 2},
-            "compensation": {"spiffs": 300.0, "commissisons": 100.0},
-            "time_extension": {"has_time_extended": False, "price": 0.0},
-            "deductions": {"deductions": 20.0}
-        }
+        "date": datetime(2024, 5, 1).isoformat(),
+        "employee_id": 2,
+        "appointment": {
+            "no_of_qualified_appointment": 6,
+            "no_of_not_qualified_appointment": 2
+        },
+        "compensation": {
+            "spiffs": 200,
+            "kpis": 500,
+            "butter_up": 5
+        },
+        "deductions": {
+            "deductions": 50,
+            "reason": "looser"
+        },
+        "allowance": {
+            "allowance_type": "test",
+            "allowance_value": 100
+        },
+        "adherence_status": True,
+        "total_salary": 1550,
+        "is_saturday": True,
+        "working_hours": 7
+    }
     ]
     
     
@@ -451,32 +503,80 @@ async def test_get_all_daily_reports_endpoint():
 def get_test_data():
     return [
         {
-            "date": datetime(2024, 8, 16),
-            "employee_id": 1,
-            "adherance": {"status": True},
-            "appointment": {"no_of_qualified_appointment": 5, "no_of_not_qualified_appointment": 3},
-            "compensation": {"spiffs": 500.0, "commissisons": 150.0},
-            "time_extension": {"has_time_extended": True, "price": 100.0},
-            "deductions": {"deductions": 50.0}
+        "date": datetime(2023, 8, 16).isoformat(),
+        "employee_id": 1,
+        "appointment": {
+            "no_of_qualified_appointment": 5,
+            "no_of_not_qualified_appointment": 2
         },
-        {
-            "date": datetime(2024, 8, 17),
-            "employee_id": 1,
-            "adherance": {"status": False},
-            "appointment": {"no_of_qualified_appointment": 3, "no_of_not_qualified_appointment": 2},
-            "compensation": {"spiffs": 300.0, "commissisons": 100.0},
-            "time_extension": {"has_time_extended": False, "price": 0.0},
-            "deductions": {"deductions": 20.0}
+        "compensation": {
+            "spiffs": 150,
+            "kpis": 500,
+            "butter_up": 5
         },
+        "deductions": {
+            "deductions": 50,
+            "reason": "looser"
+        },
+        "allowance": {
+            "allowance_type": "test",
+            "allowance_value": 100
+        },
+        "adherence_status": True,
+        "total_salary": 1550,
+        "is_saturday": True,
+        "working_hours": 7
+    },
         {
-            "date": datetime(2024, 8, 18),
-            "employee_id": 2,
-            "adherance": {"status": True},
-            "appointment": {"no_of_qualified_appointment": 4, "no_of_not_qualified_appointment": 1},
-            "compensation": {"spiffs": 400.0, "commissisons": 120.0},
-            "time_extension": {"has_time_extended": True, "price": 80.0},
-            "deductions": {"deductions": 30.0}
-        }
+        "date": datetime(2024, 8, 17).isoformat(),
+        "employee_id": 1,
+        "appointment": {
+            "no_of_qualified_appointment": 6,
+            "no_of_not_qualified_appointment": 2
+        },
+        "compensation": {
+            "spiffs": 200,
+            "kpis": 500,
+            "butter_up": 5
+        },
+        "deductions": {
+            "deductions": 50,
+            "reason": "looser"
+        },
+        "allowance": {
+            "allowance_type": "test",
+            "allowance_value": 100
+        },
+        "adherence_status": True,
+        "total_salary": 2020,
+        "is_saturday": True,
+        "working_hours": 7
+    },
+        {
+        "date": datetime(2024, 8, 18).isoformat(),
+        "employee_id": 2,
+        "appointment": {
+            "no_of_qualified_appointment": 6,
+            "no_of_not_qualified_appointment": 6
+        },
+        "compensation": {
+            "spiffs": 300,
+            "kpis": 500,
+            "butter_up": 5
+        },
+        "deductions": {
+            "deductions": 100,
+            "reason": "looser"
+        },
+        "allowance": {
+            "allowance_type": "test",
+            "allowance_value": 200
+        },
+        "adherence_status": True,
+        "total_salary": 1566,
+        "is_saturday": True,
+        "working_hours": 7
+    }
     ]
     
 # test for get dailyreport by specific employee and range date

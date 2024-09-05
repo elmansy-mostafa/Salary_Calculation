@@ -25,7 +25,7 @@ Dockerfile
 *.tmp
 
 # Ignore testing files
-tests/
+# tests/
 
 # Ignore IDE/editor files
 .vscode/
@@ -42,3 +42,5 @@ pycache/
 
 # Ignore any other unwanted files/directories
 node_modules/
+LICENSE
+README.md

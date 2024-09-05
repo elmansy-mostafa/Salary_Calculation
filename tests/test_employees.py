@@ -28,7 +28,14 @@ def get_test_employee_data():
         "company_id": 1001,
         "start_date": datetime(2023, 1, 1).isoformat(),
         "end_date": None,
-        "position": "Sales Representative"
+        "position": "Sales Representative",
+        "tier_type": "B",
+        "is_onsite": True,
+        "has_insurance": True,
+        "employee_type": {
+            "is_appointment_serrer": True,
+            "is_full_time": True
+        }
     }
 
 # Test for create_employee
@@ -57,6 +64,11 @@ async def test_create_employee():
         assert result.start_date == test_employee.start_date
         assert result.end_date == test_employee.end_date
         assert result.position == test_employee.position
+        assert result.tier_type == test_employee.tier_type
+        assert result.is_onsite == test_employee.is_onsite
+        assert result.has_insurance == test_employee.has_insurance
+        assert result.employee_type.is_appointment_serrer == test_employee.employee_type.is_appointment_serrer
+        assert result.employee_type.is_full_time == test_employee.employee_type.is_full_time
 
         # Verify that the employee was inserted into the collection
         mock_collection.insert_one.assert_called_once_with(test_employee.model_dump())
@@ -81,6 +93,11 @@ async def test_create_employee_control():
         assert result.start_date == test_employee.start_date
         assert result.end_date == test_employee.end_date
         assert result.position == test_employee.position
+        assert result.tier_type == test_employee.tier_type
+        assert result.is_onsite == test_employee.is_onsite
+        assert result.has_insurance == test_employee.has_insurance
+        assert result.employee_type.is_appointment_serrer == test_employee.employee_type.is_appointment_serrer
+        assert result.employee_type.is_full_time == test_employee.employee_type.is_full_time
 
 # Test for create_employee_endpoint
 @pytest.mark.asyncio
@@ -106,13 +123,18 @@ async def test_create_employee_endpoint():
             # Assertions
             assert response.status_code == 200
             response_json = response.json()
-            assert response_json['id'] == test_employee.id
-            assert response_json['name'] == test_employee.name
-            assert response_json['national_id'] == test_employee.national_id
+            assert response_json["id"] == test_employee.id
+            assert response_json["name"] == test_employee.name
+            assert response_json["national_id"] == test_employee.national_id
             assert response_json['company_id'] == test_employee.company_id
-            assert response_json['start_date'] == test_employee.start_date.isoformat()
-            assert response_json['end_date'] == test_employee.end_date
-            assert response_json['position'] == test_employee.position
+            assert response_json["start_date"] == test_employee.start_date
+            assert response_json["end_date"] == test_employee.end_date
+            assert response_json["position"] == test_employee.position
+            assert response_json["tier_type"] == test_employee.tier_type
+            assert response_json["is_onsite"] == test_employee.is_onsite
+            assert response_json["has_insurance"] == test_employee.has_insurance
+            assert response_json["employee_type"] == test_employee.employee_type.model_dump()
+            assert response_json["employee_type"] == test_employee.employee_type.model_dump()
 
 
 # test for get employee
@@ -142,6 +164,11 @@ async def test_get_employee():
         assert result.start_date == test_employee.start_date
         assert result.end_date == test_employee.end_date
         assert result.position == test_employee.position
+        assert result.tier_type == test_employee.tier_type
+        assert result.is_onsite == test_employee.is_onsite
+        assert result.has_insurance == test_employee.has_insurance
+        assert result.employee_type.is_appointment_serrer == test_employee.employee_type.is_appointment_serrer
+        assert result.employee_type.is_full_time == test_employee.employee_type.is_full_time
         
     # Test for a non-existent employee
     with patch('src.modules.employees.employees_crud.employee_collection', mock_collection):
@@ -171,6 +198,11 @@ async def test_get_employee_control():
         assert result.start_date == test_employee.start_date
         assert result.end_date == test_employee.end_date
         assert result.position == test_employee.position
+        assert result.tier_type == test_employee.tier_type
+        assert result.is_onsite == test_employee.is_onsite
+        assert result.has_insurance == test_employee.has_insurance
+        assert result.employee_type.is_appointment_serrer == test_employee.employee_type.is_appointment_serrer
+        assert result.employee_type.is_full_time == test_employee.employee_type.is_full_time
 
 # Test for get_employee_endpoint
 @pytest.mark.asyncio
@@ -195,13 +227,18 @@ async def test_get_employee_endpoint():
             # Assertions
             assert response.status_code == 200
             response_json = response.json()
-            assert response_json['id'] == test_employee.id
-            assert response_json['name'] == test_employee.name
-            assert response_json['national_id'] == test_employee.national_id
+            assert response_json["id"] == test_employee.id
+            assert response_json["name"] == test_employee.name
+            assert response_json["national_id"] == test_employee.national_id
             assert response_json['company_id'] == test_employee.company_id
-            assert response_json['start_date'] == test_employee.start_date.isoformat()
-            assert response_json['end_date'] == test_employee.end_date
-            assert response_json['position'] == test_employee.position
+            assert response_json["start_date"] == test_employee.start_date
+            assert response_json["end_date"] == test_employee.end_date
+            assert response_json["position"] == test_employee.position
+            assert response_json["tier_type"] == test_employee.tier_type
+            assert response_json["is_onsite"] == test_employee.is_onsite
+            assert response_json["has_insurance"] == test_employee.has_insurance
+            assert response_json["employee_type"] == test_employee.employee_type.model_dump()
+            assert response_json["employee_type"] == test_employee.employee_type.model_dump()
 
 
         
@@ -367,23 +404,37 @@ async def test_delete_employee_endpoint():
 def get_test_data():
     return [
         {
-            "id": 1,
-            "name": "John Doe",
-            "national_id": 1234567890,
-            "company_id": 1001,
-            "start_date": "2023-01-01T00:00:00",
-            "end_date": None,
-            "position": "Sales Representative"
-        },
-        {
-            "id": 2,
-            "name": "Jane Smith",
-            "national_id": 9876543210,
-            "company_id": 1002,
-            "start_date": "2023-02-01T00:00:00",
-            "end_date": None,
-            "position": "Marketing Manager"
+        "id": 1,
+        "name": "John Doe",
+        "national_id": 1234567890,
+        "company_id": 1001,
+        "start_date": datetime(2023, 1, 1).isoformat(),
+        "end_date": None,
+        "position": "Sales Representative",
+        "tier_type": "B",
+        "is_onsite": True,
+        "has_insurance": True,
+        "employee_type": {
+            "is_appointment_serrer": True,
+            "is_full_time": True
         }
+    },
+        {
+        "id": 1,
+        "name": " Doe",
+        "national_id": 123456,
+        "company_id": 1021,
+        "start_date": datetime(2023, 1, 1).isoformat(),
+        "end_date": None,
+        "position": "Sales agent",
+        "tier_type": "A",
+        "is_onsite": True,
+        "has_insurance": True,
+        "employee_type": {
+            "is_appointment_serrer": True,
+            "is_full_time": True
+        }
+    }
     ]
 
 @pytest.mark.asyncio

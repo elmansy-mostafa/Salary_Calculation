@@ -26,6 +26,7 @@ def get_mock_collection():
 # Helper function to prepare test user data
 def get_test_user_data():
     return {
+        "name": "test",
         "email" : "test@example.com",
         "password" : "testpassword123",
         "role" : "user"
@@ -60,6 +61,7 @@ async def test_create_user():
             result = await create_user(test_user)
 
             # Assertions
+            assert result.name == test_user.name
             assert result.email == test_user.email
             assert result.role == test_user.role
             assert result.hashed_password == "mock_hashed_password"
@@ -94,6 +96,7 @@ async def test_get_user_by_email():
         result = await get_user_by_email(test_email)
 
         # Assertions
+        assert result.name == expected_data.name
         assert result.email == expected_data.email
         assert result.role == expected_data.role
         assert result.hashed_password == expected_data.hashed_password
@@ -225,6 +228,7 @@ def get_test_login_data():
 
 def get_test_user():
     return {
+        "name": "test",
         "email": "test@example.com",
         "hashed_password": "mock_hashed_password",
         "role": "user",
@@ -434,12 +438,14 @@ async def test_delete_user_endpoint_user_not_found():
 def get_test_data():
     return [
         {
+        "name": "test1",
         "email": "test@example.com",
         "hashed_password": "mock_hashed_password",
         "role": "user",
         "is_verified": True  
     },
         {
+        "name": "test2",
         "email": "test2@example.com",
         "hashed_password": "mock_hashed_password",
         "role": "amin",
