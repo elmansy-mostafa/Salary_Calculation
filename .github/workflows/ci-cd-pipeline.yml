@@ -3,36 +3,41 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - main  # Trigger pipeline on push to main branch
   pull_request:
     branches:
-      - main
+      - main  # Trigger on pull requests to main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+    # Step 1: Checkout the code
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    # Step 2: Set up Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'
 
+    # Step 3: Install dependencies
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    # Step 4: Check pytest version
     - name: Check pytest version
-      run: |
-        python -m pip show pytest
+      run: python -m pip show pytest
 
+    # Step 5: Set PYTHONPATH to ensure proper test execution
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$(pwd)/src" >> $GITHUB_ENV
 
+    # Step 6: Run tests with necessary environment variables
     - name: Run tests
       env:
         DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
@@ -42,45 +47,58 @@ jobs:
         MAIL_FROM: ${{ secrets.MAIL_FROM }}
         MAIL_PORT: ${{ secrets.MAIL_PORT }}
         MAIL_SERVER: ${{ secrets.MAIL_SERVER }}
-        TESTING: ${{ secrets.TESTING }}
-      run: |
-        pytest
+        TESTING: "True"  # Assuming TESTING flag is set to True
+      run: pytest
 
+    # Step 7: Build the Docker image
     - name: Build Docker image
-      run: |
-        docker build -t mostafa9811/salary_calculation_app:latest .
-      
+      run: docker build -t mostafa9811/salary_calculation_app:latest .
+
+    # Step 8: Log in to Docker Hub and Push the image
     - name: Push Docker image
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
         docker push mostafa9811/salary_calculation_app:latest
-        
+
   deploy:
+    # The deployment job only runs after the build job succeeds
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'  # Only deploy on main branch
+
     steps:
+    # Step 9: Checkout code (optional, but good practice)
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    # Step 10: Set up SSH to access the server
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.6.0
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Set this up in GitHub Secrets
 
+    # Step 11: Add SSH Host Key for secure connection
     - name: Add SSH Host Key
       run: |
         mkdir -p ~/.ssh
-        ssh-keyscan 176.57.184.164 >> ~/.ssh/known_hosts
+        ssh-keyscan 176.57.184.164 >> ~/.ssh/known_hosts  # Replace with your server's IP
 
+    # Step 12: Deploy to the server
     - name: Deploy to Server
       run: |
-        ssh root@176.57.184.164 << 'EOF'
-          cd /home/root/Salary_Calculation
+        ssh root@176.57.184.164 << 'EOF'  # Replace with your actual server IP or hostname
+          cd /home/root/Salary_Calculation  # Navigate to the folder with your docker-compose.yml
+          
+          # Pull the latest image from Docker Hub
           docker-compose pull
+
+          # Stop and remove existing containers
           docker-compose down
+
+          # Start the new containers with the latest image
           docker-compose up --build -d
         EOF
 
+    # Step 13: Notify that the deployment is successful
     - name: Notify Deployment
       run: echo "Deployment finished successfully."
