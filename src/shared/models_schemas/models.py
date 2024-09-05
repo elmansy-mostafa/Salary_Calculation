@@ -5,12 +5,13 @@ from datetime import datetime
 
 # User model
 class User(BaseModel):
+    name : str
     email : EmailStr
     hashed_password : str
     role : str
     is_verified : bool = False
         
-    class Congig:
+    class Config:
         orm_mode = True
         
 
@@ -18,13 +19,13 @@ class User(BaseModel):
 class Login(BaseModel):
     username : str
     password : str
-    
-        
 
-#Adherance model
-class Adherance(BaseModel):
-    status : bool
     
+# saturdays model
+class Saturdays(BaseModel):
+    saturdays : int        
+
+
 # Appontments model
 class Appointment(BaseModel):
     no_of_qualified_appointment : int
@@ -33,17 +34,25 @@ class Appointment(BaseModel):
 #compension model
 class Compensation(BaseModel):
     spiffs : float
-    commissisons : float
-    
-# time extension model
-class TimeExtension(BaseModel):
-    has_time_extended : bool
-    price : Optional[float] = None
+    kpis : float
+    butter_up : float
+
     
 # deduction model
 class Deduction(BaseModel):
     deductions : float
+    reason : str
+
+# Additional allowance model
+class AdditionalAllowance(BaseModel):
+    allowance_type : str
+    allowance_value : float
     
+# EmployeeType model
+class EmployeeType(BaseModel):
+    is_appointment_serrer : bool
+    is_full_time : bool
+
 # Employee model
 class Employee(BaseModel):
     id : int
@@ -52,28 +61,51 @@ class Employee(BaseModel):
     company_id : int
     start_date : datetime
     end_date : Optional[datetime] = None
+    reason_of_leaving : Optional[str] = None
     position : str
+    tier_type : str
+    is_onsite : bool
+    has_insurance : bool
+    employee_type : EmployeeType
     
 # dailyreport model
 class DailyReport(BaseModel):
     date : datetime
     employee_id : int
-    adherance : Adherance
     appointment : Appointment
     compensation : Compensation
-    time_extension : TimeExtension
     deductions : Deduction
+    allowance : AdditionalAllowance
+    adherence_status : bool
+    total_salary : float
+    is_saturday : bool
+    working_hours : float
     
-# salary calculator service 
-class SalaryCalculator:
-    @staticmethod
-    def calculate_salary(report:DailyReport) -> float:
-        base_salary = 2000
-        total_compensation = report.compensation.spiffs + report.compensation.commissisons
-        total_deductions = report.deductions.deductions
-        if report.time_extension.has_time_extended : 
-            total_compensation += report.time_extension.price or 0
-        return base_salary + total_compensation - total_deductions
+
+class Static_values(BaseModel):
+    tier_appointment_setter_base_salary : object
+    tier_fronter_base_salary : object
+    spiffs : float
+    kpis : float
+    butter_up : float
+    allowance : object
+    hour_price : float
+    saturdays_price : float
+    
+
+
+
+
+# # salary calculator service 
+# class SalaryCalculator:
+#     @staticmethod
+#     def calculate_salary(report:DailyReport) -> float:
+#         base_salary = 2000
+#         total_compensation = report.compensation.spiffs + report.compensation.commissisons
+#         total_deductions = report.deductions.deductions
+#         if report.time_extension.has_time_extended : 
+#             total_compensation += report.time_extension.price or 0
+#         return base_salary + total_compensation - total_deductions
         
         
 

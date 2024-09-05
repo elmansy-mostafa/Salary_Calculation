@@ -24,10 +24,10 @@ else:
     DATABASE_NAME = os.getenv("DATABASE_NAME")
     database = client[DATABASE_NAME]
 
-# defining collections within the database
-employee_collection = database["employees"]
-daily_report_collection = database["daily_reports"]
-user_collection = database["users"]
+    # defining collections within the database
+    employee_collection = database["employees"]
+    daily_report_collection = database["daily_reports"]
+    user_collection = database["users"]
 
 # Function to initialize beanie with the database and models
 async def init_db():

@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from typing import Optional
 from datetime import datetime
-from .daily_reports_crud import create_daily_report, update_daily_report, get_daily_report, delete_daily_report, get_all_daily_reports, get_daily_reports_by_employee_and_range_date, calculate_daily_report_salary
+from .daily_reports_crud import create_daily_report, update_daily_report, get_daily_report, delete_daily_report, get_all_daily_reports, get_daily_reports_by_employee_and_range_date
 from shared.models_schemas.schemas import DailyReportCreate, DailyReportUpdate
 
 
@@ -44,8 +44,8 @@ async def get_daily_reports_by_employee_and_renage_date_control(employee_id:int,
     return reports
 
 
-async def get_daily_report_salary_control(employee_id:int, report_date:datetime):
-    total_salary = await calculate_daily_report_salary(employee_id, report_date)
-    if not total_salary:
-        raise exception_error
-    return total_salary
+# async def get_daily_report_salary_control(employee_id:int, report_date:datetime):
+#     total_salary = await calculate_daily_report_salary(employee_id, report_date)
+#     if not total_salary:
+#         raise exception_error
+#     return total_salary

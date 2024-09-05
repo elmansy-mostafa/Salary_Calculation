@@ -1,13 +1,21 @@
 services:
   app:
     image: mostafa9811/salary_calculation_app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: salary_calculation_app
     ports:
       - "8000:8000"
     depends_on:
       - mongo
+    volumes:
+      - ./src:/app/src  
     environment:
       - MONGO_URI=mongodb://mongodb-container:27017
       - DATABASE_NAME=db_user
+    restart: always
+
   mongo:
     image: mongo:latest
     container_name: mongodb-container
@@ -18,3 +26,4 @@ services:
 
 volumes:
   mongo_data:
+    driver: local

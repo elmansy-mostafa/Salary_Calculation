@@ -5,6 +5,7 @@ from datetime import datetime
 
 # user model schemas 
 class UserBase(BaseModel):
+    name : str
     email : EmailStr
     role : str
 
@@ -23,9 +24,8 @@ class Token(BaseModel):
     
 class TokenRefresh(BaseModel):
     refresh_token : str
-    
 
-    
+
 class TokenData(BaseModel):
     email : Optional[str] = None
     role : Optional[str] = None
@@ -34,10 +34,12 @@ class SignupResponse(BaseModel):
     msg :str
 
 
-#Adherance model
-class Adherance(BaseModel):
-    status : bool
     
+# saturdays model
+class Saturdays(BaseModel):
+    saturdays : int        
+
+
 # Appontments model
 class Appointment(BaseModel):
     no_of_qualified_appointment : int
@@ -46,17 +48,25 @@ class Appointment(BaseModel):
 #compension model
 class Compensation(BaseModel):
     spiffs : float
-    commissisons : float
-    
-# time extension model
-class TimeExtension(BaseModel):
-    has_time_extended : bool
-    price : Optional[float] = None
+    kpis : float
+    butter_up : float
+
     
 # deduction model
 class Deduction(BaseModel):
     deductions : float
+    reason : str
+
+# Additional allowance model
+class AdditionalAllowance(BaseModel):
+    allowance_type : str
+    allowance_value : float
     
+# EmployeeType model
+class EmployeeType(BaseModel):
+    is_appointment_serrer : bool
+    is_full_time : bool
+
 # Employee model
 class EmployeeBase(BaseModel):
     id : int
@@ -65,7 +75,14 @@ class EmployeeBase(BaseModel):
     company_id : int
     start_date : datetime
     end_date : Optional[datetime] = None
+    reason_of_leaving : Optional[str] = None
     position : str
+    tier_type : str
+    is_onsite : bool
+    has_insurance : bool
+    employee_type : EmployeeType
+
+
     
 class EmployeeCreate(EmployeeBase):
     id : int
@@ -89,20 +106,26 @@ class EmployeeListResponse(BaseModel):
 class DailyReportBase(BaseModel):
     date : datetime
     employee_id : int
-    adherance : Adherance
     appointment : Appointment
     compensation : Compensation
-    time_extension : TimeExtension
     deductions : Deduction
+    allowance : AdditionalAllowance
+    adherence_status : bool
+    total_salary : float
+    is_saturday : bool
+    working_hours : float
     
 class DailyReportCreate(DailyReportBase):
     pass 
+
 class DailyReportUpdate(DailyReportBase):
     pass 
+
 class DailyReportResponse(DailyReportBase):
     pass 
+
 class DailyReportRequest(BaseModel):
     employee_id: int
     report_date : datetime
 
-    
+

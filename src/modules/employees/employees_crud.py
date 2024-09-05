@@ -59,24 +59,6 @@ async def delete_employee(employee_id : int) -> bool:
     return False
 
 
-# async def get_all_employee() -> List[Employee]:
-#     employee_sursor = employee_collection.find({})
-#     employees = await employee_sursor.to_list(length=None)
-#     return [Employee(**employee_data) for employee_data in employees]
-
-
-
-
-
-# async def get_all_employee() -> List[Employee]:
-#     employee_cursor = employee_collection.find({})
-#     if os.getenv("TESTING") == "True":
-#         employees = [Employee(**employee_data) async for employee_data in employee_cursor]  
-#         return employees
-#     else:
-#         employees = await employee_cursor.to_list(length=None)
-#         return [Employee(**employee_data) for employee_data in employees]
-
 
 async def get_all_employee() -> List[Employee]:
     if os.getenv("TESTING") == "True":
