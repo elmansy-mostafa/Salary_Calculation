@@ -261,7 +261,6 @@ async def test_update_daily_report_control():
     
     # Prepare test data
     test_daily_report_data = get_test_daily_report_data()
-    test_daily_report_data['deductions'] = {"deductions":100.0}
     test_daily_report = DailyReport(**test_daily_report_data)
     updated_data = {"total_salary": 2000}
 
@@ -285,7 +284,6 @@ async def test_update_daily_report_endpoint():
     
     # Prepare test data
     test_daily_report_data = get_test_daily_report_data()
-    test_daily_report_data['deductions'] = {"deductions":100.0}
     test_daily_report = DailyReportResponse(**test_daily_report_data)
     updated_data = {"total_salary": 2000}
 
