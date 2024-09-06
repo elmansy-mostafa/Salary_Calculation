@@ -211,7 +211,11 @@ async def test_update_daily_report():
     # Prepare test data
     test_daily_report_data = get_test_daily_report_data()
     test_daily_report = DailyReport(**test_daily_report_data)
-    update_data = {"total_salary": 2000}
+    update_data = {"deductions": {
+            "deductions": 100,
+            "reason": "late arrival"
+        }
+    }
 
     # Create a mock MongoDB collection
     mock_collection = MagicMock()
@@ -230,7 +234,8 @@ async def test_update_daily_report():
         assert result is not None, "Expected an daily_report instance, but got None"
         assert result.employee_id == test_daily_report.employee_id
         assert result.date == test_daily_report.date
-        assert result.total_salary == 2000  # Updated attribute
+        assert result.deductions['deductions'] == 100  # Updated attribute
+        assert result.deductions['reason'] == "ate arrival"  # Updated attribute
 
 
     # Patch the daily_report_collection used in update_daily_report
@@ -252,7 +257,12 @@ async def test_update_daily_report_control():
     test_daily_report_data = get_test_daily_report_data()
     test_daily_report_data['deductions'] = {"deductions":100.0}
     test_daily_report = DailyReport(**test_daily_report_data)
-    update_data = {"total_salary": 2000}
+    update_data = {"deductions": {
+            "deductions": 100,
+            "reason": "late arrival"
+        }
+    }
+
 
     # Patch update_daily_report
     with patch('src.modules.daily_reports.daily_reports_controller.update_daily_report', AsyncMock(return_value=test_daily_report)):
@@ -262,7 +272,8 @@ async def test_update_daily_report_control():
         assert result is not None, "Expected an daily_report instance, but got None"
         assert result.employee_id == test_daily_report.employee_id
         assert result.date == test_daily_report.date
-        assert result.total_salary == 2000  # Updated attribute
+        assert result.deductions['deductions'] == 100  # Updated attribute
+        assert result.deductions['reason'] == "ate arrival"  # Updated attribute
 
 
 # Test for update_daily_report_endpoint
@@ -272,7 +283,11 @@ async def test_update_daily_report_endpoint():
     test_daily_report_data = get_test_daily_report_data()
     test_daily_report_data['deductions'] = {"deductions":100.0}
     test_daily_report = DailyReportResponse(**test_daily_report_data)
-    update_data = {"total_salary": 2000}
+    update_data = {"deductions": {
+            "deductions": 100,
+            "reason": "late arrival"
+        }
+    }
 
     # Mock the update_daily_report_control function to return a test employee
     with patch('src.modules.daily_reports.daily_reports_controller.update_daily_report_control', AsyncMock(return_value=test_daily_report)):
@@ -292,7 +307,8 @@ async def test_update_daily_report_endpoint():
             assert response.status_code == 200
             response_json = response.json()
             assert response_json['employee_id'] == test_daily_report.employee_id
-            assert response_json['total_salary'] == update_data['total_salary']
+            assert response_json['deductions']['deductions'] == update_data["deductions"]['deductions']
+            assert response_json['deductions']['reason'] == update_data["deductions"]['reason']
     
         
 # test foe delete daily_report
