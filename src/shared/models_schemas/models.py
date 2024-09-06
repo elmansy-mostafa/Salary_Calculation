@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr
 from typing import Optional
 from datetime import datetime
 
@@ -11,8 +11,7 @@ class User(BaseModel):
     role : str
     is_verified : bool = False
         
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
         
 
 
