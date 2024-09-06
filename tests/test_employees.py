@@ -26,7 +26,7 @@ def get_test_employee_data():
         "name": "John Doe",
         "national_id": 1234567890,
         "company_id": 1001,
-        "start_date": datetime(2023, 1, 1).isoformat(),
+        "start_date": "2024-09-05T19:55:07.006Z",
         "end_date": None,
         "position": "Sales Representative",
         "tier_type": "B",
@@ -61,7 +61,7 @@ async def test_create_employee():
         assert result.name == test_employee.name
         assert result.national_id == test_employee.national_id
         assert result.company_id == test_employee.company_id
-        assert result.start_date == test_employee.start_date.isoformat()
+        assert result.start_date == test_employee.start_date
         assert result.end_date == test_employee.end_date
         assert result.position == test_employee.position
         assert result.tier_type == test_employee.tier_type
@@ -90,7 +90,7 @@ async def test_create_employee_control():
         assert result.name == test_employee.name
         assert result.national_id == test_employee.national_id
         assert result.company_id == test_employee.company_id
-        assert result.start_date == test_employee.start_date.isoformat()
+        assert result.start_date == test_employee.start_date
         assert result.end_date == test_employee.end_date
         assert result.position == test_employee.position
         assert result.tier_type == test_employee.tier_type
@@ -127,7 +127,7 @@ async def test_create_employee_endpoint():
             assert response_json["name"] == test_employee.name
             assert response_json["national_id"] == test_employee.national_id
             assert response_json['company_id'] == test_employee.company_id
-            assert response_json["start_date"] == test_employee.start_date.isoformat()
+            assert response_json["start_date"] == test_employee.start_date
             assert response_json["end_date"] == test_employee.end_date
             assert response_json["position"] == test_employee.position
             assert response_json["tier_type"] == test_employee.tier_type
@@ -161,7 +161,7 @@ async def test_get_employee():
         assert result.name == test_employee.name
         assert result.national_id == test_employee.national_id
         assert result.company_id == test_employee.company_id
-        assert result.start_date == test_employee.start_date.isoformat()
+        assert result.start_date == test_employee.start_date
         assert result.end_date == test_employee.end_date
         assert result.position == test_employee.position
         assert result.tier_type == test_employee.tier_type
@@ -195,7 +195,7 @@ async def test_get_employee_control():
         assert result.name == test_employee.name
         assert result.national_id == test_employee.national_id
         assert result.company_id == test_employee.company_id
-        assert result.start_date == test_employee.start_date.isoformat()
+        assert result.start_date == test_employee.start_date
         assert result.end_date == test_employee.end_date
         assert result.position == test_employee.position
         assert result.tier_type == test_employee.tier_type
@@ -231,7 +231,7 @@ async def test_get_employee_endpoint():
             assert response_json["name"] == test_employee.name
             assert response_json["national_id"] == test_employee.national_id
             assert response_json['company_id'] == test_employee.company_id
-            assert response_json["start_date"] == test_employee.start_date.isoformat()
+            assert response_json["start_date"] == test_employee.start_date
             assert response_json["end_date"] == test_employee.end_date
             assert response_json["position"] == test_employee.position
             assert response_json["tier_type"] == test_employee.tier_type
@@ -408,7 +408,7 @@ def get_test_data():
         "name": "John Doe",
         "national_id": 1234567890,
         "company_id": 1001,
-        "start_date": datetime(2023, 1, 1).isoformat(),
+        "start_date": "2024-09-05T19:55:07.006Z",
         "end_date": None,
         "position": "Sales Representative",
         "tier_type": "B",
@@ -420,11 +420,11 @@ def get_test_data():
         }
     },
         {
-        "id": 1,
+        "id": 2,
         "name": " Doe",
         "national_id": 123456,
         "company_id": 1021,
-        "start_date": datetime(2023, 1, 1).isoformat(),
+        "start_date": "2024-09-06T19:55:07.006Z",
         "end_date": None,
         "position": "Sales agent",
         "tier_type": "A",

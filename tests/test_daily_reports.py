@@ -211,11 +211,7 @@ async def test_update_daily_report():
     # Prepare test data
     test_daily_report_data = get_test_daily_report_data()
     test_daily_report = DailyReport(**test_daily_report_data)
-    update_data = {"deductions": {
-            "deductions": 100,
-            "reason": "late arrival"
-        }
-    }
+    updated_data = {"total_salary": 2000}
 
     # Create a mock MongoDB collection
     mock_collection = MagicMock()
@@ -224,18 +220,17 @@ async def test_update_daily_report():
     with patch('src.modules.daily_reports.daily_reports_crud.daily_report_collection', mock_collection):
         # Mock the find_one_and_update method to return the updated daily_report data
         updated_report = test_daily_report.model_dump()
-        updated_report.update(update_data)
+        updated_report.update(updated_data)
         mock_collection.find_one_and_update.return_value = updated_report
 
         # Call the function
-        result = await update_daily_report(test_daily_report.employee_id, test_daily_report.date, update_data)
+        result = await update_daily_report(test_daily_report.employee_id, test_daily_report.date, updated_data)
 
         # Assertions: Check that the result is as expected
         assert result is not None, "Expected an daily_report instance, but got None"
         assert result.employee_id == test_daily_report.employee_id
         assert result.date == test_daily_report.date
-        assert result.deductions['deductions'] == 100  # Updated attribute
-        assert result.deductions['reason'] == "ate arrival"  # Updated attribute
+        assert result.total_salary == 2000  # Updated attribute
 
 
     # Patch the daily_report_collection used in update_daily_report
@@ -244,7 +239,7 @@ async def test_update_daily_report():
         mock_collection.find_one_and_update.return_value = None
 
         # Call the function
-        result = await update_daily_report(999, datetime(2024, 11, 2), update_data)  # ID that does not exist
+        result = await update_daily_report(999, datetime(2024, 11, 2), updated_data)  # ID that does not exist
 
         # Assertions: Check that the result is None
         assert result is None, "Expected result to be None for a non-existent daily_report"
@@ -257,23 +252,18 @@ async def test_update_daily_report_control():
     test_daily_report_data = get_test_daily_report_data()
     test_daily_report_data['deductions'] = {"deductions":100.0}
     test_daily_report = DailyReport(**test_daily_report_data)
-    update_data = {"deductions": {
-            "deductions": 100,
-            "reason": "late arrival"
-        }
-    }
+    updated_data = {"total_salary": 2000}
 
 
     # Patch update_daily_report
     with patch('src.modules.daily_reports.daily_reports_controller.update_daily_report', AsyncMock(return_value=test_daily_report)):
-        result = await update_daily_report_control(test_daily_report.employee_id, test_daily_report.date, update_data)
+        result = await update_daily_report_control(test_daily_report.employee_id, test_daily_report.date, updated_data)
 
         # Assertions: Check all attributes and type
         assert result is not None, "Expected an daily_report instance, but got None"
         assert result.employee_id == test_daily_report.employee_id
         assert result.date == test_daily_report.date
-        assert result.deductions['deductions'] == 100  # Updated attribute
-        assert result.deductions['reason'] == "ate arrival"  # Updated attribute
+        assert result.total_salary == 2000
 
 
 # Test for update_daily_report_endpoint
@@ -283,11 +273,7 @@ async def test_update_daily_report_endpoint():
     test_daily_report_data = get_test_daily_report_data()
     test_daily_report_data['deductions'] = {"deductions":100.0}
     test_daily_report = DailyReportResponse(**test_daily_report_data)
-    update_data = {"deductions": {
-            "deductions": 100,
-            "reason": "late arrival"
-        }
-    }
+    updated_data = {"total_salary": 2000}
 
     # Mock the update_daily_report_control function to return a test employee
     with patch('src.modules.daily_reports.daily_reports_controller.update_daily_report_control', AsyncMock(return_value=test_daily_report)):
@@ -307,8 +293,7 @@ async def test_update_daily_report_endpoint():
             assert response.status_code == 200
             response_json = response.json()
             assert response_json['employee_id'] == test_daily_report.employee_id
-            assert response_json['deductions']['deductions'] == update_data["deductions"]['deductions']
-            assert response_json['deductions']['reason'] == update_data["deductions"]['reason']
+            assert response_json['total_salary'] == updated_data["total_salary"]
     
         
 # test foe delete daily_report
