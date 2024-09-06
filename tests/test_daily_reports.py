@@ -19,6 +19,11 @@ def get_mock_collection():
     mock_db = mock_client['test_db']
     return mock_db['daily_report']
 
+# drop the collection
+def drop_mock_collection():
+    collection = get_mock_collection()
+    collection.drop()
+
 
 # Helper function to prepare test daily_report data
 def get_test_daily_report_data():
@@ -208,6 +213,9 @@ async def test_get_daily_report_endpoint():
 # test for update daily_report
 @pytest.mark.asyncio
 async def test_update_daily_report():
+    # drop mock_collection
+    drop_mock_collection()
+    
     # Prepare test data
     test_daily_report_data = get_test_daily_report_data()
     test_daily_report = DailyReport(**test_daily_report_data)
@@ -248,6 +256,9 @@ async def test_update_daily_report():
 # Test for update_daily_report_control
 @pytest.mark.asyncio
 async def test_update_daily_report_control():
+    # drop mock_collection
+    drop_mock_collection()
+    
     # Prepare test data
     test_daily_report_data = get_test_daily_report_data()
     test_daily_report_data['deductions'] = {"deductions":100.0}
@@ -269,6 +280,9 @@ async def test_update_daily_report_control():
 # Test for update_daily_report_endpoint
 @pytest.mark.asyncio
 async def test_update_daily_report_endpoint():
+    # drop mock_collection
+    drop_mock_collection()
+    
     # Prepare test data
     test_daily_report_data = get_test_daily_report_data()
     test_daily_report_data['deductions'] = {"deductions":100.0}
