@@ -1,6 +1,5 @@
 from typing import Optional, List
 from shared.models_schemas.models import Employee
-from motor.motor_asyncio import AsyncIOMotorCursor
 from config.database.database import employee_collection
 import os
 from dotenv import load_dotenv

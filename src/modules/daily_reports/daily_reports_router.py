@@ -10,9 +10,9 @@ router = APIRouter()
 
 # daily_reports endpoints
 
-@router.post("/daily_reports", response_model=DailyReportResponse)
-async def create_daily_report_endpoint(report:DailyReportCreate):
-    return await create_daily_report_control(report)
+@router.post("/daily_reports/static_values/{values_id}/employee/{employee_id}", response_model=DailyReportResponse)
+async def create_daily_report_endpoint(report:DailyReportCreate, values_id:int, employee_id:int):
+    return await create_daily_report_control(report, values_id, employee_id)
 
 
 

@@ -28,6 +28,7 @@ else:
 employee_collection = database["employees"]
 daily_report_collection = database["daily_reports"]
 user_collection = database["users"]
+static_values_collection = database["static_values"]
 
 # Function to initialize beanie with the database and models
 async def init_db():
