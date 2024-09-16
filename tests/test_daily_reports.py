@@ -90,8 +90,8 @@ async def test_create_daily_report():
 
     # Mock the get_static_values and get_employee functions
     with patch('src.modules.daily_reports.daily_reports_crud.daily_report_collection', mock_collection), \
-        patch('src.modules.static_values.static_values_crud.get_static_values') as mock_get_static_values, \
-        patch('src.modules.employees.employees_crud.get_employee') as mock_get_employee:
+        patch('src.modules.daily_reports.daily_reports_crud.get_static_values') as mock_get_static_values, \
+        patch('src.modules.daily_reports.daily_reports_crud.get_employee') as mock_get_employee:
 
         # Mock return values for get_static_values and get_employee
         mock_get_static_values.return_value = {"hour_price": {"tier_A": 33.33}}  # Mock static values
