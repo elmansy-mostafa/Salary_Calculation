@@ -94,8 +94,8 @@ async def test_create_daily_report():
         patch('src.modules.daily_reports.daily_reports_crud.get_employee') as mock_get_employee:
 
         # Mock return values for get_static_values and get_employee
-        mock_get_static_values.return_value = {"hour_price": {"tier_A": 33.33}}  # Mock static values
-        mock_get_employee.return_value = {"tier_type": "tier_A"}  # Mock employee data
+        mock_get_static_values.return_value = {"hour_price": {"A": 55.55}}  # Mock static values
+        mock_get_employee.return_value = {"tier_type": "A"}  # Mock employee data
 
         # Mock the insert_one method to simulate insertion
         mock_collection.insert_one.return_value = test_daily_report_data
