@@ -1,6 +1,16 @@
 # 1. Use a base image
 FROM python:3.12-slim
 
+# Install system dependencies for WeasyPrint
+RUN apt-get update && apt-get install -y \
+    libpango1.0-0 \
+    libgdk-pixbuf2.0-0 \
+    libpangocairo-1.0-0 \
+    libcairo2 \
+    libffi-dev \
+    libpangoft2-1.0-0 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # 2. Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1

@@ -105,8 +105,7 @@ class EmployeeListResponse(BaseModel):
 # Static values model
 class StaticValuesBase(BaseModel):
     id : int
-    tier_appointment_setter_base_salary: dict
-    tier_fronter_base_salary: dict
+    tier_base_salary: dict
     spiffs: float
     kpis: float
     butter_up: float

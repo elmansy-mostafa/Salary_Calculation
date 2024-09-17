@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, EmailStr
-from typing import Optional
+from typing import Optional, Dict
 from datetime import datetime
 
 
@@ -72,13 +72,12 @@ class Employee(BaseModel):
 # Static values model
 class StaticValues(BaseModel):
     id : int
-    tier_appointment_setter_base_salary: dict
-    tier_fronter_base_salary: dict
+    tier_base_salary: Dict[str,float]
     spiffs: float
     kpis: float
     butter_up: float
-    allowance: dict
-    hour_price: dict
+    allowance: Dict[str,float]
+    hour_price: Dict[str,float]
     # saturdays_price: float
 
 # Daily report model

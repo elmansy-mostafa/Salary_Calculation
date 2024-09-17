@@ -1,0 +1,77 @@
+<html>
+<head>
+  <title>Salary Breakdown for {{ name }}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      text-align: center;
+      color: #007BFF;
+    }
+    hr {
+      border: 1px solid black;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    p {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Salary Breakdown for {{ name }}</h1>
+
+  <p>Basic Salary</p>
+  <p>30 days {{ basic_salary }} - ({{ basic_salary_deduction_absent }} + {{ basic_salary_deduction_missing_hours }}) = {{ final_salary }}</p>
+  <p>{{ no_show_days }}</p>
+  <p>{{ missing_hours }}</p>
+  <hr/>
+
+  <p>Overpay (Saturdays + Extra Hours):</p>
+  <p>{{ saturdays }}</p>
+  <p>salary for saturdays = {{ overpay_summary }}</p>
+  <p>{{ additional_hours }}</p>
+  <p>total of additional_working_hours = {{ additional_hours_value }}</p>
+  <hr/>
+
+  <p>KPIs</p>
+  <p>{{ kpi_score }}</p>
+  <p>{{ kpi_amount }}</p>
+  <hr/>
+
+  <p>Spiffs</p>
+  <p>{{ spiffs_summary }}</p>
+  <hr/>
+
+  <p>Ramadan Allowance</p>
+  <p>{{ ramadan_allowance_summary }}</p>
+  <hr/>
+
+  <p>Transportation Allowance</p>
+  <p>{{ transportation_allowance_summary }}</p>
+  <hr/>
+
+  <p>Deductions</p>
+  <p>{{ deductions }}</p>
+  <hr/>
+
+  <p>Butter Up: {{ butter_up }} EGP</p>
+
+  <p>Part-time</p>
+  <p>Tier Type: {{ tier_type }} => Appointments Target ({{ appointment_target }}) a day.</p>
+
+</body>
+</html>
