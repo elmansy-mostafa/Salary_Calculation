@@ -76,38 +76,6 @@ async def test_create_daily_report():
         # Verify that the employee was inserted into the collection
         mock_collection.insert_one.assert_called_once_with(test_daily_report.model_dump())
         
-        
-@pytest.mark.asyncio
-async def test_create_daily_report():
-    # Prepare test data
-    test_daily_report_data = get_test_daily_report_data()
-    test_daily_report = DailyReport(**test_daily_report_data)
-    values_id = 1  # Mock value for values_id
-    employee_id = 1  # Mock value for employee_id
-
-    # Create a mock MongoDB collection
-    mock_collection = MagicMock()
-
-    # Mock the get_static_values and get_employee functions
-    with patch('src.modules.daily_reports.daily_reports_crud.daily_report_collection', mock_collection), \
-        patch('src.modules.daily_reports.daily_reports_crud.get_static_values') as mock_get_static_values, \
-        patch('src.modules.daily_reports.daily_reports_crud.get_employee') as mock_get_employee:
-
-        # Mock return values for get_static_values and get_employee
-        mock_get_static_values.return_value = {"hour_price": {"A": 55.55}}  # Mock static values
-        mock_get_employee.return_value = {"tier_type": "A"}  # Mock employee data
-
-        # Mock the insert_one method to simulate insertion
-        mock_collection.insert_one.return_value = test_daily_report_data
-
-        # Call the function with all required arguments
-        result = await create_daily_report(test_daily_report, values_id, employee_id)
-
-        # Assertions: Check if the returned report matches the input
-        assert result == test_daily_report
-
-        # Verify that the report was inserted into the collection
-        mock_collection.insert_one.assert_called_once_with(test_daily_report.model_dump())
 
 # Test for create_daily_report_control
 @pytest.mark.asyncio
@@ -116,12 +84,11 @@ async def test_create_daily_report_control():
     test_daily_report_data = get_test_daily_report_data()
     test_report_create_data = DailyReportCreate(**test_daily_report_data)
     test_daily_report = DailyReport(**test_daily_report_data)
-    values_id = 1  # Mock value for values_id
-    employee_id = 1  # Mock value for employee_id
+
 
     # Patch create_daily_report
     with patch('src.modules.daily_reports.daily_reports_controller.create_daily_report', AsyncMock(return_value=test_daily_report)):
-        result = await create_daily_report_control(test_report_create_data, values_id, employee_id)
+        result = await create_daily_report_control(test_report_create_data)
 
         # Assertions: Check all attributes and type
         assert result== test_daily_report
@@ -133,8 +100,6 @@ async def test_create_daily_report_endpoint():
     # Prepare test data
     test_daily_report_data = get_test_daily_report_data()
     test_daily_report = DailyReportResponse(**test_daily_report_data)
-    values_id = 1  # Mock value for values_id
-    employee_id = 1  # Mock value for employee_id
     
     # Mock the create_daily_report_control function to return a test employee
     with patch('src.modules.daily_reports.daily_reports_controller.create_daily_report_control', AsyncMock(return_value=test_daily_report)):
@@ -145,7 +110,7 @@ async def test_create_daily_report_endpoint():
 
             # Call the create_employee_endpoint using FastAPI's TestClient with authentication
             response = client.post(
-                f"/daily_reports/static_values/{values_id}/employee/{employee_id}",
+                f"/daily_reports",
                 json=test_daily_report_data,
                 headers={"Authorization": f"Bearer {token}"}
             )
