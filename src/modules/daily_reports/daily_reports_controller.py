@@ -7,8 +7,8 @@ from shared.models_schemas.schemas import DailyReportCreate, DailyReportUpdate
 
 exception_error = HTTPException(status_code=404, detail="Daily report not found")
 
-async def create_daily_report_control(report:DailyReportCreate, values_id:int, employee_id:int):
-    create_report = await create_daily_report(report, values_id, employee_id)
+async def create_daily_report_control(report:DailyReportCreate):
+    create_report = await create_daily_report(report)
     return create_report
 
 

@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title>Salary Breakdown for {{ name }}</title>
+  <title>Salary Breakdown in month : {{month}} for {{ name }}</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -32,7 +32,17 @@
   </style>
 </head>
 <body>
-  <h1>Salary Breakdown for {{ name }}</h1>
+  <h1>Salary Breakdown in month : {{month}} for {{ name }}</h1>
+
+  <p>Employee Data </p>
+  <p>name :  {{ name }}</p>
+  <p>position :  {{ position }}</p>
+  <p>tier_type : {{ tier_type }}</p>
+  <p>is_onsite :  {{ is_onsite }}</p>
+  <p>has_insurance :  {{ has_insurance }}</p>
+  <p>is_appointment_serrer : {{ is_appointment_serrer }}</p>
+  <p>is_full_time : {{ is_full_time }}</p>
+  <hr/>
 
   <p>Basic Salary</p>
   <p>30 days {{ basic_salary }} - ({{ basic_salary_deduction_absent }} + {{ basic_salary_deduction_missing_hours }}) = {{ final_salary }}</p>
@@ -48,30 +58,30 @@
   <hr/>
 
   <p>KPIs</p>
-  <p>{{ kpi_score }}</p>
-  <p>{{ kpi_amount }}</p>
+  <p>{{ kpis_score }}</p>
+  <p>total kpis = {{ kpis_total }}</p>
   <hr/>
 
-  <p>Spiffs</p>
-  <p>{{ spiffs_summary }}</p>
-  <hr/>
-
-  <p>Ramadan Allowance</p>
-  <p>{{ ramadan_allowance_summary }}</p>
+  <p>Spiffs (2 CAD)</p>
+  <p>{{ spiffs_logs }}</p>
+  <p>total spiffs = {{ spiffs_total }} (cad = 35.66)</p>
   <hr/>
 
   <p>Transportation Allowance</p>
-  <p>{{ transportation_allowance_summary }}</p>
+  <p>{{ transportation_allowance }}</p>
   <hr/>
 
   <p>Deductions</p>
-  <p>{{ deductions }}</p>
+  <p>{{ deductions_info }}</p>
+  <p>deductions = {{ deductions }}</p>
   <hr/>
 
-  <p>Butter Up: {{ butter_up }} EGP</p>
+  <p>Butter Up =  {{ butter_up }} EGP</p>
+  <hr/>
 
-  <p>Part-time</p>
-  <p>Tier Type: {{ tier_type }} => Appointments Target ({{ appointment_target }}) a day.</p>
+  <p>Total Salary =  {{ total_salary }} EGP</p>
+
+
 
 </body>
 </html>

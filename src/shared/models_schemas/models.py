@@ -73,11 +73,13 @@ class Employee(BaseModel):
 class StaticValues(BaseModel):
     id : int
     tier_base_salary: Dict[str,float]
-    spiffs: float
+    cad: float
     kpis: float
     butter_up: float
     allowance: Dict[str,float]
     hour_price: Dict[str,float]
+    no_of_qulified_appt_tier_setter : Dict[str,float] 
+    no_of_qulified_appt_tier_fronter : Dict[str,float] 
     # saturdays_price: float
 
 # Daily report model
@@ -93,59 +95,59 @@ class DailyReport(BaseModel):
     is_saturday: bool
     working_hours: float
 
-    def calculate_total_salary(self, static_values:StaticValues, employee:Employee):
-        if employee.tier_type == "C" and employee.employee_type.is_appointment_serrer == True:
-            if self.appointment.no_of_qualified_appointment >= 3 :
-                kpis = self.compensation.kpis * static_values.kpis 
-            else:
-                kpis = 0
-        elif employee.tier_type == "B" and employee.employee_type.is_appointment_serrer == True:
-            if self.appointment.no_of_qualified_appointment >= 4 :
-                kpis = self.compensation.kpis * static_values.kpis 
-            else:
-                kpis = 0
-        elif employee.tier_type == "A" and employee.employee_type.is_appointment_serrer == True:
-            if self.appointment.no_of_qualified_appointment >= 6 :
-                kpis = self.compensation.kpis * static_values.kpis 
-            else:
-                kpis = 0
-        elif employee.tier_type == "C" and employee.employee_type.is_appointment_serrer == False:
-            if self.appointment.no_of_qualified_appointment >= 7 :
-                kpis = self.compensation.kpis * static_values.kpis 
-            else:
-                kpis = 0
-        elif employee.tier_type == "B" and employee.employee_type.is_appointment_serrer == False:
-            if self.appointment.no_of_qualified_appointment >= 6 :
-                kpis = self.compensation.kpis * static_values.kpis 
-            else:
-                kpis = 0
-        elif employee.tier_type == "A" and employee.employee_type.is_appointment_serrer == False:
-            if self.appointment.no_of_qualified_appointment >= 6 :
-                kpis = self.compensation.kpis * static_values.kpis 
-            else:
-                kpis = 0
+    # def calculate_total_salary(self, static_values:StaticValues, employee:Employee):
+    #     if employee.tier_type == "C" and employee.employee_type.is_appointment_serrer == True:
+    #         if self.appointment.no_of_qualified_appointment >= 3 :
+    #             kpis = self.compensation.kpis * static_values.kpis 
+    #         else:
+    #             kpis = 0
+    #     elif employee.tier_type == "B" and employee.employee_type.is_appointment_serrer == True:
+    #         if self.appointment.no_of_qualified_appointment >= 4 :
+    #             kpis = self.compensation.kpis * static_values.kpis 
+    #         else:
+    #             kpis = 0
+    #     elif employee.tier_type == "A" and employee.employee_type.is_appointment_serrer == True:
+    #         if self.appointment.no_of_qualified_appointment >= 6 :
+    #             kpis = self.compensation.kpis * static_values.kpis 
+    #         else:
+    #             kpis = 0
+    #     elif employee.tier_type == "C" and employee.employee_type.is_appointment_serrer == False:
+    #         if self.appointment.no_of_qualified_appointment >= 7 :
+    #             kpis = self.compensation.kpis * static_values.kpis 
+    #         else:
+    #             kpis = 0
+    #     elif employee.tier_type == "B" and employee.employee_type.is_appointment_serrer == False:
+    #         if self.appointment.no_of_qualified_appointment >= 6 :
+    #             kpis = self.compensation.kpis * static_values.kpis 
+    #         else:
+    #             kpis = 0
+    #     elif employee.tier_type == "A" and employee.employee_type.is_appointment_serrer == False:
+    #         if self.appointment.no_of_qualified_appointment >= 6 :
+    #             kpis = self.compensation.kpis * static_values.kpis 
+    #         else:
+    #             kpis = 0
                 
-        if self.is_saturday:
-            saturdays = self.working_hours * static_values.hour_price[employee.tier_type]
-        else:
-            saturdays = 0
-        # Calculate compensation, allowance, and deductions
-        spiffs = self.compensation.spiffs * static_values.spiffs
-        butter_up = self.compensation.butter_up * static_values.butter_up
+    #     if self.is_saturday:
+    #         saturdays = self.working_hours * static_values.hour_price[employee.tier_type]
+    #     else:
+    #         saturdays = 0
+    #     # Calculate compensation, allowance, and deductions
+    #     spiffs = self.compensation.spiffs * 2 * static_values.cad
+    #     butter_up = self.compensation.butter_up * static_values.butter_up
         
-        compensation = spiffs + kpis + butter_up
-        allowance = self.allowance.allowance_value
-        deductions = self.deductions.deductions
+    #     compensation = spiffs + kpis + butter_up
+    #     allowance = self.allowance.allowance_value
+    #     deductions = self.deductions.deductions
 
-        if self.working_hours != 9 :
-            # Calculate the value based on working hours
-            hours_value = (self.working_hours - 9) * static_values.hour_price[employee.tier_type]
-        else:
-            hours_value = 0
+    #     if self.working_hours != 9 :
+    #         # Calculate the value based on working hours
+    #         hours_value = (self.working_hours - 9) * static_values.hour_price[employee.tier_type]
+    #     else:
+    #         hours_value = 0
         
-        # Total salary calculation
-        total_salary = compensation + allowance + saturdays + hours_value - deductions
-        return total_salary
+    #     # Total salary calculation
+    #     total_salary = compensation + allowance + saturdays + hours_value - deductions
+    #     return total_salary
 
 
     

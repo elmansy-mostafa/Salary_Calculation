@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from jinja2 import Environment, FileSystemLoader
 from weasyprint import HTML
 from fastapi import HTTPException
@@ -42,8 +42,19 @@ router = APIRouter()
 
 @router.get("/generate_salary_pdf/{employee_id}/{values_id}")
 async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
-    # Fetch all daily reports for the specific employee
-    daily_reports = await daily_report_collection.find({"employee_id": employee_id}).to_list(None)
+    # Get the current month and year
+    now = datetime.now(timezone.utc)
+    start_of_month = datetime(now.year, now.month, 1)  # First day of the current month
+    next_month = datetime(now.year, now.month + 1, 1) if now.month < 12 else datetime(now.year + 1, 1, 1)  # First day of the next month
+
+    # Query to get only reports for the current month
+    daily_reports = await daily_report_collection.find({
+        "employee_id": employee_id,
+        "date": {
+            "$gte": start_of_month,   # Greater than or equal to the first day of the current month
+            "$lt": next_month         # Less than the first day of the next month
+        }
+    }).to_list(None)
     
     if daily_reports is None:
         return{"error":"daily report not found for employee"}
@@ -54,14 +65,14 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
     
     static_values = await get_static_values(values_id)
     
-    # Prepare list of missing dates with dates
-    missing_date_info = []
-    count = 0
+    # Prepare list of absent with dates
+    absent_info = []
+    absent_count = 0
     for report in daily_reports:
         if report.get("adherence_status", 0) == False:
             date_str = report["date"].strftime("%Y-%m-%d")
-            missing_date_info.append(f"In day {date_str} : absent ")
-            count += 1 
+            absent_info.append(f"In day {date_str} : absent ")
+            absent_count += 1 
 
     # Prepare list of missing hours with dates
     missing_hours_info = []
@@ -90,39 +101,117 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
             hours = report["working_hours"]
             saturdays_value = saturdays_value + (hours * static_values.hour_price[employee.tier_type])
             saturdays.append(f"working in: {date_str}, saturday for {hours} hours : (double paid)")
+
+    # Prepare list of kpis in compensation
+    kpis = []
+    kpis_values = 0
+    kpis_amount = 0  
+
+    for report in daily_reports:
+        no_of_qulified_app = report.get("appointment", {}).get("no_of_qualified_appointment", 0)
+        kpis_values += no_of_qulified_app
+        kpis_amount += report.get("compensation", {}).get("kpis", 0)
+        date_str = report["date"].strftime("%Y-%m-%d")
+        kpis.append(f"Making {no_of_qulified_app} qualified appointments on {date_str}")
+        
+        # Ensure that compensation and kpi information exist in each report before accessing them
+    if employee.employee_type.is_appointment_serrer == True:
+        if kpis_values >= static_values.no_of_qulified_appt_tier_setter[employee.tier_type] * 30:
+            kpis_total = kpis_amount * static_values.kpis
+    else:
+        if kpis_values >= static_values.no_of_qulified_appt_tier_fronter[employee.tier_type] * 30:
+            kpis_total = kpis_amount * static_values.kpis
             
+    # Prepare list of spiffs in compensation
+    spiffs_list = []
+    spiffs_values = 0
+    for report in daily_reports:
+        spiffs = report.get("compensation", {}).get("spiffs", 0)
+        spiffs_values += spiffs
+        date_str = report["date"].strftime("%Y-%m-%d")
+        spiffs_list.append(f"In day {date_str} has {spiffs} spiffs")
+    
+
+    # Prepare list of transportation allowance data 
+    count = 0
+    for report in daily_reports:
+        if report.get("adherence_status", 0) == True:
+            count += 1 
+    if count == 0:
+        transportation_allowance = 0
+    else:
+        allowance_sum = count * static_values.allowance["travel"]
+        transportation_allowance = f"{count} Days * {static_values.allowance["travel"]} EGP = {allowance_sum}"
+            
+    
+    # Prepare list of deductions
+    deductions_info = []
+    deductions_values = 0
+    for report in daily_reports:
+        if report.get("deductions", {}).get("deductions", 0) !=0:
+            deduction = report.get("deductions", {}).get("deductions", 0)
+            reason = report.get("deductions", {}).get("reason", 0)
+            deductions_values += deduction
+            date_str = report["date"].strftime("%Y-%m-%d")
+            deductions_info.append(f"In day {date_str} has {deduction} deduction for the reason of: {reason}")
+        else:
+            deductions_values = 0
+            
+    # Prepare list of butterup in compensation
+    butter_up_values = 0
+    for report in daily_reports:
+        butter_up = report.get("compensation", {}).get("butter_up", 0)
+        butter_up_values += butter_up
+    butter_up_total = butter_up_values * static_values.butter_up
             
     # basic salary
     basic_salary = static_values.tier_base_salary[employee.tier_type]
-    basic_salary_deduction_absent = count * (static_values.tier_base_salary[employee.tier_type] / 30)
+    basic_salary_deduction_absent = absent_count * (static_values.tier_base_salary[employee.tier_type] / 30)
     basic_salary_deduction_missing_hours =  static_values.hour_price[employee.tier_type] * sum
     final_salary = basic_salary - basic_salary_deduction_absent - basic_salary_deduction_missing_hours
     
     # overpay
     overpay_summary =  saturdays_value * 2 
     additional_hours = additional_hours_value * 2
+    total_spiffs = spiffs_values * 2 * static_values.cad
+    
+    # total salary
+    total_salary = final_salary + overpay_summary + additional_hours + kpis_total + total_spiffs + allowance_sum + deductions_values + butter_up_total
+    
+
+    
     # Prepare salary data dictionary
     salary_data = {
         "name": employee.name,
+        "position":employee.position,
+        "tier_type":employee.tier_type,
+        "is_onsite":employee.is_onsite,
+        "has_insurance":employee.has_insurance,
+        "is_appointment_serrer":employee.employee_type.is_appointment_serrer,
+        "is_full_time":employee.employee_type.is_full_time,
+        "name": employee.name,
+        "month": now.strftime("%m"),
         "basic_salary" :basic_salary, 
         "basic_salary_deduction_absent":basic_salary_deduction_absent,
         "basic_salary_deduction_missing_hours": basic_salary_deduction_missing_hours ,
         "final_salary": final_salary,
-        "no_show_days": ", ".join(missing_date_info), 
-        "missing_hours": ", ".join(missing_hours_info),
-        "saturdays": ", ".join(saturdays),
+        "no_show_days": "<br>".join(absent_info), 
+        "missing_hours": "<br>".join(missing_hours_info),
+        "saturdays": "<br>".join(saturdays),
         "overpay_summary": overpay_summary,
-        "additional_hours": ", ".join(additional_hours_info),
+        "additional_hours": "<br>".join(additional_hours_info),
         "additional_hours_value": additional_hours,
-        "kpi_score": "63/91 and quality",
-        "kpi_amount": "2000 EGP",
-        "spiffs_summary": "47 CAD = 1648 EGP (4/1, One CAD equals 35.07)",
-        "ramadan_allowance_summary": "13 days * 150 EGP = 1650 EGP",
-        "transportation_allowance_summary": "45.45 EGP * 22 days = 1000 EGP",
-        "deductions": "N/A",
-        "butter_up": 500,
-        "tier_type": "A",
-        "appointment_target": 3
+        "kpis_score": "<br>".join(kpis),
+        "kpis_total": kpis_total,
+        "spiffs_logs": "<br>".join(spiffs_list),
+        "spiffs_total": total_spiffs,
+        "transportation_allowance": transportation_allowance,
+        "deductions_info": "<br>".join(deductions_info),
+        "deductions": deductions_values,
+        "butter_up": butter_up_total,
+        "total_salary": total_salary,
+        
+
     }
 
     # Generate PDF using the service function

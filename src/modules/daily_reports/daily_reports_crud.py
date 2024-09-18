@@ -14,15 +14,15 @@ load_dotenv(dotenv_path)
 
 # CRUD operations for daily_report        
 
-async def create_daily_report(report:DailyReport,values_id:int, employee_id:int ) -> DailyReport:
-    static_values = await get_static_values(values_id)
-    if not static_values:
-        raise ValueError(f"static values with id {values_id} not found")
-    employee = await get_employee(employee_id)
-    if not employee:
-        raise ValueError(f"employee with id {employee_id} not found")
+async def create_daily_report(report:DailyReport ) -> DailyReport:
+    # static_values = await get_static_values(values_id)
+    # if not static_values:
+    #     raise ValueError(f"static values with id {values_id} not found")
+    # employee = await get_employee(employee_id)
+    # if not employee:
+    #     raise ValueError(f"employee with id {employee_id} not found")
     
-    report.total_salary = report.calculate_total_salary(static_values, employee)
+    # report.total_salary = report.calculate_total_salary(static_values, employee)
     
     report_dict = report.model_dump()
     if os.getenv("TESTING") == "True":
