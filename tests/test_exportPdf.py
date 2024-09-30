@@ -40,8 +40,9 @@ mock_daily_reports = [
 async def test_generate_salary_pdf_endpoint(mock_write_pdf, mock_find, mock_get_employee, mock_get_static_values):
     # Mock the asynchronous behavior of the find query
     mock_cursor = AsyncMock()
-    mock_cursor.to_list.return_value = mock_daily_reports
+    mock_cursor.__aiter__.return_value = iter(mock_daily_reports)  # Simulating async iteration
     mock_find.return_value = mock_cursor
+    
 
     # Mock the PDF generation
     mock_write_pdf.return_value = b"%PDF-1.4 mock content"

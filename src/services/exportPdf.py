@@ -48,7 +48,7 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
             "$gte": start_of_month,   # Greater than or equal to the first day of the current month
             "$lt": next_month         # Less than the first day of the next month
         }
-    }).to_list(None)
+    }).to_list(length=None)
     
     if daily_reports is None:
         return{"error":"daily report not found for employee"}
