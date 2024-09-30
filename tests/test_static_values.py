@@ -115,14 +115,14 @@ async def test_create_static_values_endpoint():
             assert response.status_code == 200
             response_json = response.json()
             assert response_json['id'] == test_static_values.id
-            assert response_json['tier_base_salary'] == test_static_values.tier_base_salary.model_dump()
+            assert response_json['tier_base_salary'] == test_static_values.tier_base_salary
             assert response_json['cad'] == test_static_values.cad
             assert response_json['kpis'] == test_static_values.kpis
-            assert response_json['allowance'] == test_static_values.allowance.model_dump()
-            assert response_json['hour_price'] == test_static_values.hour_price.model_dump()
-            assert response_json['no_of_qulified_appt_tier_setter'] == test_static_values.no_of_qulified_appt_tier_setter.model_dump()
+            assert response_json['allowance'] == test_static_values.allowance
+            assert response_json['hour_price'] == test_static_values.hour_price
+            assert response_json['no_of_qulified_appt_tier_setter'] == test_static_values.no_of_qulified_appt_tier_setter
             assert response_json['butter_up'] == test_static_values.butter_up
-            assert response_json['no_of_qulified_appt_tier_fronter'] == test_static_values.no_of_qulified_appt_tier_fronter.model_dump()
+            assert response_json['no_of_qulified_appt_tier_fronter'] == test_static_values.no_of_qulified_appt_tier_fronter
             
             
 
@@ -147,7 +147,7 @@ async def test_get_static_values():
 
         # Validate the result
         assert result is not None, "Expected result to be an static_values instance, but got None"
-        assert result == test_static_values
+        assert result.model_dump() == test_static_values
         
     # Test for a non-existent static_values
     with patch('src.modules.static_values.static_values_crud.static_values_collection', mock_collection):
@@ -195,7 +195,15 @@ async def test_get_static_values_endpoint():
             # Assertions
             assert response.status_code == 200
             response_json = response.json()
-            assert response_json == test_static_values
+            assert response_json['id'] == test_static_values.id
+            assert response_json['tier_base_salary'] == test_static_values.tier_base_salary
+            assert response_json['cad'] == test_static_values.cad
+            assert response_json['kpis'] == test_static_values.kpis
+            assert response_json['allowance'] == test_static_values.allowance
+            assert response_json['hour_price'] == test_static_values.hour_price
+            assert response_json['no_of_qulified_appt_tier_setter'] == test_static_values.no_of_qulified_appt_tier_setter
+            assert response_json['butter_up'] == test_static_values.butter_up
+            assert response_json['no_of_qulified_appt_tier_fronter'] == test_static_values.no_of_qulified_appt_tier_fronter
 
 
 
