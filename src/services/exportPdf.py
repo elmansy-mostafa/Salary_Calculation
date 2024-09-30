@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader
 from weasyprint import HTML
+from io import BytesIO
 from fastapi import HTTPException
 from fastapi import Response, APIRouter
 from modules.employees.employees_crud import get_employee
@@ -27,10 +28,12 @@ def generate_salary_pdf(salary_data: dict) -> bytes:
         # Render the template with salary data
         html_content = template.render(**salary_data)
 
-        # Convert HTML content to PDF
-        pdf = HTML(string=html_content).write_pdf()
-
-        return pdf
+        # Generate the PDF from HTML content
+        pdf_io = BytesIO()
+        HTML(string=html_content).write_pdf(pdf_io)
+        pdf_content = pdf_io.getvalue()  # Get binary PDF content
+        return pdf_content
+                
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating PDF: {str(e)}")
     
@@ -70,6 +73,8 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
         return {"error": "Employee not found"}
     
     static_values = await get_static_values(values_id)
+    if static_values is None:
+        return {"error": "static_values not found"}
     
     # Prepare list of absent with dates
     absent_info = []
@@ -229,9 +234,9 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
 
     }
 
-    # Generate PDF using the service function
-    pdf = generate_salary_pdf(salary_data)
 
-    # Return the PDF as a response
-    headers = {'Content-Disposition': 'inline; filename="salary_breakdown.pdf"'}
-    return Response(content=pdf, media_type="application/pdf", headers=headers)
+    # Generate the PDF content
+    pdf_content = generate_salary_pdf(salary_data)  
+    
+    # Return the PDF response
+    return Response(content=pdf_content, media_type="application/pdf")
