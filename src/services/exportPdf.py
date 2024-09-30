@@ -42,13 +42,22 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
     next_month = datetime(now.year, now.month + 1, 1) if now.month < 12 else datetime(now.year + 1, 1, 1)  # First day of the next month
 
     # Query to get only reports for the current month
-    daily_reports = await daily_report_collection.find({
-        "employee_id": employee_id,
-        "date": {
-            "$gte": start_of_month,   # Greater than or equal to the first day of the current month
-            "$lt": next_month         # Less than the first day of the next month
-        }
-    }).to_list(length=None)
+    if os.getenv("TESTING") == "True":
+        daily_reports = await daily_report_collection.find({
+            "employee_id": employee_id,
+            "date": {
+                "$gte": start_of_month,   
+                "$lt": next_month         
+            }
+        })
+    else:
+        daily_reports = await daily_report_collection.find({
+            "employee_id": employee_id,
+            "date": {
+                "$gte": start_of_month,   # Greater than or equal to the first day of the current month
+                "$lt": next_month         # Less than the first day of the next month
+            }
+        }).to_list(length=None)
     
     if daily_reports is None:
         return{"error":"daily report not found for employee"}

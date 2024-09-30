@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
+from unittest.mock import patch, MagicMock
 from fastapi.testclient import TestClient
 from weasyprint import HTML
 from src.main import app  
@@ -38,11 +38,8 @@ mock_daily_reports = [
 @patch("src.config.database.database.daily_report_collection.find")
 @patch("weasyprint.HTML.write_pdf")
 async def test_generate_salary_pdf_endpoint(mock_write_pdf, mock_find, mock_get_employee, mock_get_static_values):
-    # Mock the asynchronous behavior of the find query
-    mock_cursor = AsyncMock()
-    mock_cursor.__aiter__.return_value = iter(mock_daily_reports)  # Simulating async iteration
-    mock_find.return_value = mock_cursor
-    
+    # Mock the daily report collection find query
+    mock_find.return_value.to_list = MagicMock(return_value=mock_daily_reports)
 
     # Mock the PDF generation
     mock_write_pdf.return_value = b"%PDF-1.4 mock content"
@@ -50,8 +47,9 @@ async def test_generate_salary_pdf_endpoint(mock_write_pdf, mock_find, mock_get_
     # Make the request to the endpoint
     response = client.get("/generate_salary_pdf/1/1")
 
-    # Assert the response
+    # Assertions
     assert response.status_code == 200
+    assert response.headers["Content-Disposition"] == 'inline; filename="salary_breakdown.pdf"'
     assert response.content == b"%PDF-1.4 mock content"
 
 @patch("weasyprint.HTML.write_pdf")

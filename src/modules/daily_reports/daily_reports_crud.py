@@ -94,15 +94,3 @@ async def get_daily_reports_by_employee_and_range_date(employee_id:int, start_da
         reports = await cursor.to_list(length=None)
         return [DailyReport(**report) for report in reports]
 
-
-# async def calculate_daily_report_salary(employee_id:int, report_date:datetime) -> float:
-#     query = {
-#         "employee_id" : employee_id,
-#         "date" : report_date
-#     }
-#     report_data = await daily_report_collection.find_one(query)
-#     if not report_data:
-#         return 0
-#     report = DailyReport(**report_data)
-#     total_salary = SalaryCalculator.calculate_salary(report)
-#     return total_salary
