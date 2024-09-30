@@ -147,7 +147,7 @@ async def test_get_static_values():
 
         # Validate the result
         assert result is not None, "Expected result to be an static_values instance, but got None"
-        assert result.model_dump() == test_static_values
+        assert result.model_dump() == test_static_values.model_dump()
         
     # Test for a non-existent static_values
     with patch('src.modules.static_values.static_values_crud.static_values_collection', mock_collection):
