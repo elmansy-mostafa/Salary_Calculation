@@ -6,7 +6,7 @@ from src.main import app
 client = TestClient(app)
 
 @pytest.mark.asyncio
-@patch("src.modules.exportPdf.generate_salary_pdf", return_value=b"%PDF-1.4 mock content")  # Mock PDF generation
+@patch("src.services.exportPdf.generate_salary_pdf", return_value=b"%PDF-1.4 mock content")  # Mock PDF generation
 @patch("src.modules.employees.employees_crud.get_employee", new_callable=AsyncMock)
 @patch("src.config.database.database.daily_report_collection.find", new_callable=AsyncMock)
 @patch("src.services.exportPdf.get_static_values", new_callable=AsyncMock)
