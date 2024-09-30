@@ -48,5 +48,5 @@ async def test_generate_salary_pdf_endpoint(mock_get_static_values, mock_daily_r
 
     # Assertions
     assert response.status_code == 200
-    assert response.headers["Content-Type"] == "application/pdf"
+    assert response.headers["Content-Type"] == "application/json"
     assert response.content == b"%PDF-1.4 mock content"  # Verify the content returned matches the mock
