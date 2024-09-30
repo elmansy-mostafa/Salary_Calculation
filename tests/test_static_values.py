@@ -100,9 +100,9 @@ async def test_create_static_values_endpoint():
     # Mock the create_static_values_control function to return a test static_values
     with patch('src.modules.static_values.static_values_controller.create_static_values_control', AsyncMock(return_value=test_static_values)):
         # Patch the authorization dependency to always return a valid user
-        with patch('src.modules.auth.authorizations.get_admin', return_value={"email": "admin@example.com", "role": "admin"}):
+        with patch('src.modules.auth.authorizations.get_superadmin', return_value={"email": "admin@example.com", "role": "superadmin"}):
             # Create a mock token for the authenticated user
-            token = create_access_token({"sub": "admin@example.com", "role": "admin"})
+            token = create_access_token({"sub": "admin@example.com", "role": "superadmin"})
 
             # Call the create_static_values_endpoint using FastAPI's TestClient with authentication
             response = client.post(
@@ -174,9 +174,9 @@ async def test_get_static_values_endpoint():
     # Mock the get_static_values_control function to return a test static_values
     with patch('src.modules.static_values.static_values_controller.get_static_values_control', AsyncMock(return_value=test_static_values)):
         # Patch the authorization dependency to always return a valid user
-        with patch('src.modules.auth.authorizations.get_admin', return_value={"email": "admin@example.com", "role": "admin"}):
+        with patch('src.modules.auth.authorizations.get_superadmin', return_value={"email": "admin@example.com", "role": "superadmin"}):
             # Create a mock token for the authenticated user
-            token = create_access_token({"sub": "admin@example.com", "role": "admin"})
+            token = create_access_token({"sub": "admin@example.com", "role": "superadmin"})
 
             # Call the get_static_values_endpoint using FastAPI's TestClient with authentication
             response = client.get(
@@ -260,9 +260,9 @@ async def test_update_static_values_endpoint():
     # Mock the update_static_values_control function to return a test static_values
     with patch('src.modules.static_values.static_values_controller.update_static_values_control', AsyncMock(return_value=test_static_values)):
         # Patch the authorization dependency to always return a valid user
-        with patch('src.modules.auth.authorizations.get_admin', return_value={"email": "admin@example.com", "role": "admin"}):
+        with patch('src.modules.auth.authorizations.get_superadmin', return_value={"email": "admin@example.com", "role": "superadmin"}):
             # Create a mock token for the authenticated user
-            token = create_access_token({"sub": "admin@example.com", "role": "admin"})
+            token = create_access_token({"sub": "admin@example.com", "role": "superadmin"})
 
             # Call the update_static_values_endpoint using FastAPI's TestClient with authentication
             response = client.put(
@@ -336,9 +336,9 @@ async def test_delete_static_values_endpoint():
     with patch('src.modules.static_values.static_values_controller.delete_static_values_control', return_value=True):
         # Patch the authorization dependency to always return a valid user
         
-        with patch('src.modules.auth.authorizations.get_admin', return_value={"email": "admin@example.com", "role": "admin"}):
+        with patch('src.modules.auth.authorizations.get_superadmin', return_value={"email": "admin@example.com", "role": "superadmin"}):
             # Create a mock token for the authenticated user
-            token = create_access_token({"sub": "admin@example.com", "role": "admin"})
+            token = create_access_token({"sub": "admin@example.com", "role": "superadmin"})
             
             # Call the delete_static_values_endpoint using FastAPI's TestClient with authentication
             response = client.delete(
