@@ -71,7 +71,8 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
     for report in daily_reports:
         if report.get("adherence_status", 0) == False:
             date_str = report["date"].strftime("%Y-%m-%d")
-            absent_info.append(f"In day {date_str} : absent ")
+            date_name = report["date"].strftime("%A")
+            absent_info.append(f"In {date_name} {date_str} : absent ")
             absent_count += 1 
 
     # Prepare list of missing hours with dates
@@ -84,13 +85,15 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
             missing_hours = 9 - report["working_hours"]
             sum = sum + missing_hours
             date_str = report["date"].strftime("%Y-%m-%d")
-            missing_hours_info.append(f"In day {date_str} : {missing_hours} hrs missing")
+            date_name = report["date"].strftime("%A")
+            missing_hours_info.append(f"In {date_name} {date_str} : {missing_hours} hrs missing")
             
         if report.get("working_hours", 0) > 9 :
             additional_hours = report["working_hours"] - 9
             additional_hours_value = additional_hours_value + (additional_hours * static_values.hour_price[employee.tier_type])
             date_str = report["date"].strftime("%Y-%m-%d")
-            additional_hours_info.append(f"In day {date_str} : {additional_hours} hrs over : (double paid)")
+            date_name = report["date"].strftime("%A")
+            additional_hours_info.append(f"In {date_name} {date_str} : {additional_hours} hrs over : (double paid)")
     
     # Prepare list of working in saturdays
     saturdays = []
@@ -100,7 +103,7 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
             date_str = report["date"].strftime("%Y-%m-%d")
             hours = report["working_hours"]
             saturdays_value = saturdays_value + (hours * static_values.hour_price[employee.tier_type])
-            saturdays.append(f"working in: {date_str}, saturday for {hours} hours : (double paid)")
+            saturdays.append(f"working on saturday {date_str} for {hours} hours : (double paid)")
 
     # Prepare list of kpis in compensation
     kpis = []
@@ -112,7 +115,8 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
         kpis_values += no_of_qulified_app
         kpis_amount += report.get("compensation", {}).get("kpis", 0)
         date_str = report["date"].strftime("%Y-%m-%d")
-        kpis.append(f"Making {no_of_qulified_app} qualified appointments on {date_str}")
+        date_name = report["date"].strftime("%A")
+        kpis.append(f"Making {no_of_qulified_app} qualified appointments on {date_name} {date_str}")
         
         # Ensure that compensation and kpi information exist in each report before accessing them
     if employee.employee_type.is_appointment_serrer == True:
@@ -129,7 +133,8 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
         spiffs = report.get("compensation", {}).get("spiffs", 0)
         spiffs_values += spiffs
         date_str = report["date"].strftime("%Y-%m-%d")
-        spiffs_list.append(f"In day {date_str} has {spiffs} spiffs")
+        date_name = report["date"].strftime("%A")
+        spiffs_list.append(f"In {date_name} {date_str} has {spiffs} spiffs")
     
 
     # Prepare list of transportation allowance data 
@@ -153,7 +158,8 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
             reason = report.get("deductions", {}).get("reason", 0)
             deductions_values += deduction
             date_str = report["date"].strftime("%Y-%m-%d")
-            deductions_info.append(f"In day {date_str} has {deduction} deduction for the reason of: {reason}")
+            date_name = report["date"].strftime("%A")
+            deductions_info.append(f"In {date_name} {date_str} has {deduction} deduction for the reason of: {reason}")
         else:
             deductions_values = 0
             
@@ -174,7 +180,8 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
     overpay_summary =  saturdays_value * 2 
     additional_hours = additional_hours_value * 2
     total_spiffs = spiffs_values * 2 * static_values.cad
-    
+        
+
     # total salary
     total_salary = final_salary + overpay_summary + additional_hours + kpis_total + total_spiffs + allowance_sum + deductions_values + butter_up_total
     
@@ -191,6 +198,8 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
         "is_full_time":employee.employee_type.is_full_time,
         "name": employee.name,
         "month": now.strftime("%m"),
+        "month_name": now.strftime("%B"),
+        "year": now.strftime("%Y"),
         "basic_salary" :basic_salary, 
         "basic_salary_deduction_absent":basic_salary_deduction_absent,
         "basic_salary_deduction_missing_hours": basic_salary_deduction_missing_hours ,

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from typing import Optional, Dict
 from datetime import datetime
 
@@ -59,7 +59,7 @@ class Employee(BaseModel):
     name : str
     national_id : int
     company_id : int
-    start_date : datetime
+    start_date : datetime = Field(default_factory=datetime.now)
     end_date : Optional[datetime] = None
     reason_of_leaving : Optional[str] = None
     position : str
@@ -84,7 +84,7 @@ class StaticValues(BaseModel):
 
 # Daily report model
 class DailyReport(BaseModel):
-    date: datetime
+    date: datetime = Field(default_factory=datetime.now)
     employee_id: int
     appointment: Appointment
     compensation: Compensation
