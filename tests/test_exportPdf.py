@@ -33,9 +33,9 @@ mock_daily_reports = [
 ]
 
 @pytest.mark.asyncio
-@patch("modules.salary.get_employee", return_value=mock_employee)
-@patch("modules.salary.get_static_values", return_value=mock_static_values)
-@patch("config.database.database.daily_report_collection.find")
+@patch("src.services.exportPdf.get_employee", return_value=mock_employee)
+@patch("src.services.exportPdf.get_static_values", return_value=mock_static_values)
+@patch("src.config.database.database.daily_report_collection.find")
 @patch("weasyprint.HTML.write_pdf")
 async def test_generate_salary_pdf_endpoint(mock_write_pdf, mock_find, mock_get_employee, mock_get_static_values):
     # Mock the daily report collection find query
