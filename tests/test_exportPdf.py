@@ -10,7 +10,7 @@ client = TestClient(app)
 import json
 
 @pytest.mark.asyncio
-@patch("src.modules.employees.employees_crud.get_employee", new_callable=AsyncMock)
+@patch("src.services.exportPdf.get_employee", new_callable=AsyncMock)
 @patch("src.config.database.database.daily_report_collection.find", new_callable=AsyncMock)
 @patch("src.services.exportPdf.generate_salary_pdf", new_callable=AsyncMock)
 @patch("src.modules.static_values.static_values_crud.get_static_values", new_callable=AsyncMock)
