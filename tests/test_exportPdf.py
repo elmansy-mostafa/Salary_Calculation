@@ -1,78 +1,83 @@
-from datetime import datetime
-from fastapi.testclient import TestClient
-from unittest.mock import patch, AsyncMock, MagicMock
 import pytest
-from src.main import app
-import json
+from unittest.mock import patch, MagicMock
+from fastapi.testclient import TestClient
+from weasyprint import HTML
+from src.main import app  # Replace with your actual app import
+from src.services.exportPdf import generate_salary_pdf
 
 client = TestClient(app)
 
-import json
+# Mock data for employee and static values
+mock_employee = {
+    "employee_id": 1,
+    "name": "John Doe",
+    "position": "Developer",
+    "tier_type": "A",
+    "is_onsite": True,
+    "has_insurance": True,
+    "employee_type": {"is_appointment_serrer": True, "is_full_time": True}
+}
+
+mock_static_values = {
+    "hour_price": {"A": 50},
+    "no_of_qulified_appt_tier_setter": {"A": 5},
+    "allowance": {"travel": 20},
+    "kpis": 100,
+    "tier_base_salary": {"A": 3000},
+    "butter_up": 10
+}
+
+mock_daily_reports = [
+    {"date": "2024-09-01", "adherence_status": True, "working_hours": 9, "is_saturday": False},
+    {"date": "2024-09-02", "adherence_status": False, "working_hours": 7, "is_saturday": True},
+]
 
 @pytest.mark.asyncio
-@patch("src.services.exportPdf.get_employee", new_callable=AsyncMock)
-@patch("src.config.database.database.daily_report_collection.find", new_callable=AsyncMock)
-@patch("src.services.exportPdf.generate_salary_pdf", new_callable=AsyncMock)
-@patch("src.modules.static_values.static_values_crud.get_static_values", new_callable=AsyncMock)
-async def test_generate_salary_pdf_endpoint(
-    mock_get_static_values,
-    mock_generate_salary_pdf,
-    mock_daily_report_find,
-    mock_get_employee
-):
-    # Mock employee data
-    mock_employee = MagicMock()
-    mock_employee.name = 'John Doe'
-    mock_employee.position = 'Developer'
-    mock_employee.tier_type = 'A'
-    mock_employee.is_onsite = True
-    mock_employee.has_insurance = True
-    mock_employee.employee_type = MagicMock(is_appointment_serrer=True, is_full_time=True)
-    
-    # Ensure this mock is returning the employee data
-    mock_get_employee.return_value = mock_employee
+@patch("modules.salary.get_employee", return_value=mock_employee)
+@patch("modules.salary.get_static_values", return_value=mock_static_values)
+@patch("config.database.database.daily_report_collection.find")
+@patch("weasyprint.HTML.write_pdf")
+async def test_generate_salary_pdf_endpoint(mock_write_pdf, mock_find, mock_get_employee, mock_get_static_values):
+    # Mock the daily report collection find query
+    mock_find.return_value.to_list = MagicMock(return_value=mock_daily_reports)
 
-    # Mock static values
-    mock_static_values = MagicMock()
-    # ... setting up mock_static_values as in your original code
-    mock_get_static_values.return_value = mock_static_values
-
-    # Mock daily reports
-    mock_daily_reports = [ ... ]  # Your mock daily report setup
-    mock_daily_report_find.return_value = mock_daily_reports
-
-    # Mock the PDF content returned from generate_salary_pdf
-    mock_pdf_content = b"%PDF-1.4 mock content"
-    mock_generate_salary_pdf.return_value = mock_pdf_content
+    # Mock the PDF generation
+    mock_write_pdf.return_value = b"%PDF-1.4 mock content"
 
     # Make the request to the endpoint
     response = client.get("/generate_salary_pdf/1/1")
 
-    # Print response content for debugging
-    print(f"Response status code: {response.status_code}")
-    print(f"Response headers: {response.headers}")
-    print(f"Response content: {response.content}")
+    # Assertions
 
-    # Verify that the mocked functions were called
-    mock_get_employee.assert_called_once_with(1)  # Ensure it's called as expected
-    mock_get_static_values.assert_called_once_with(1)
-    mock_daily_report_find.assert_called_once()
+    assert response.status_code == 200
+    assert response.headers["Content-Type"] == "application/pdf"
+    assert "Content-Disposition" in response.headers
+    assert response.headers["Content-Disposition"] == 'inline; filename="salary_breakdown.pdf"'
+    assert response.content == b"%PDF-1.4 mock content"
 
-    # Check if the response is JSON (error case)
-    if response.headers.get("Content-Type") == "application/json":
-        error_content = json.loads(response.content)
-        print(f"Error content: {error_content}")
-        assert "error" in error_content
-        assert error_content["error"] == "Employee not found"
-    else:
-        # If it's not JSON, it should be a PDF
-        assert response.status_code == 200
-        assert response.headers["Content-Type"] == "application/pdf"
-        assert "Content-Disposition" in response.headers
-        assert response.headers["Content-Disposition"] == 'inline; filename="salary_breakdown.pdf"'
-        assert response.content == mock_pdf_content
-    
-    
+@patch("weasyprint.HTML.write_pdf")
+def test_generate_salary_pdf(mock_write_pdf):
+    # Mock the PDF generation
+    mock_write_pdf.return_value = b"%PDF-1.4 mock content"
 
+    # Example salary data
+    salary_data = {
+        "name": "John Doe",
+        "position": "Developer",
+        "tier_type": "A",
+        "is_onsite": True,
+        "has_insurance": True,
+        "is_appointment_serrer": True,
+        "is_full_time": True,
+        "basic_salary": 3000,
+        "final_salary": 2800,
+        "total_salary": 3200
+    }
+
+    # Generate the PDF
+    pdf = generate_salary_pdf(salary_data)
+
+    # Assertions
+    assert pdf == b"%PDF-1.4 mock content"
 
     
