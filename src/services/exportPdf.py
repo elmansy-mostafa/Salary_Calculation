@@ -6,17 +6,11 @@ from fastapi import Response, APIRouter
 from modules.employees.employees_crud import get_employee
 from config.database.database import daily_report_collection
 from modules.static_values.static_values_crud import get_static_values
-from modules.daily_reports.daily_reports_crud import get_daily_report
 
 import os
 
 def generate_salary_pdf(salary_data: dict) -> bytes:
-    """
-    Generates a PDF for salary breakdown using the provided salary data.
     
-    :param salary_data: A dictionary containing the employee salary information
-    :return: The generated PDF as bytes
-    """
     try:
         # Set the path to the templates directory
         templates_dir = os.path.join(os.path.dirname(__file__), '..', 'templates')
