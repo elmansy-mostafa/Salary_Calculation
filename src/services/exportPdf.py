@@ -43,7 +43,7 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
 
     # Query to get only reports for the current month
     if os.getenv("TESTING") == "True":
-        daily_reports = await daily_report_collection.find({
+        daily_reports = daily_report_collection.find({
             "employee_id": employee_id,
             "date": {
                 "$gte": start_of_month,   
