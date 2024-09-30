@@ -44,7 +44,7 @@ async def test_generate_salary_pdf_endpoint(mock_get_static_values, mock_daily_r
     mock_daily_report_find.return_value.to_list.return_value = mock_daily_reports
 
     # Make the request to the endpoint
-    response = await client.get("/generate_salary_pdf/1/1")  # Use await for async call
+    response = client.get("/generate_salary_pdf/1/1")  # Use await for async call
 
     # Assertions
     assert response.status_code == 200
