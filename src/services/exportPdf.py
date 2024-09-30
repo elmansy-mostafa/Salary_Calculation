@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader
 from weasyprint import HTML
 from fastapi import HTTPException
@@ -8,6 +9,8 @@ from config.database.database import daily_report_collection
 from modules.static_values.static_values_crud import get_static_values
 
 import os
+dotenv_path = os.path.join(os.path.dirname(__file__), '..', 'config', 'env', '.env')
+load_dotenv(dotenv_path)
 
 def generate_salary_pdf(salary_data: dict) -> bytes:
     

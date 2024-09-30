@@ -2,8 +2,6 @@ from typing import Optional, List
 from datetime import datetime
 from shared.models_schemas.models import DailyReport
 from config.database.database import daily_report_collection
-from modules.static_values.static_values_crud import get_static_values
-from modules.employees.employees_crud import get_employee
 import os
 from dotenv import load_dotenv
 
@@ -14,16 +12,7 @@ load_dotenv(dotenv_path)
 
 # CRUD operations for daily_report        
 
-async def create_daily_report(report:DailyReport ) -> DailyReport:
-    # static_values = await get_static_values(values_id)
-    # if not static_values:
-    #     raise ValueError(f"static values with id {values_id} not found")
-    # employee = await get_employee(employee_id)
-    # if not employee:
-    #     raise ValueError(f"employee with id {employee_id} not found")
-    
-    # report.total_salary = report.calculate_total_salary(static_values, employee)
-    
+async def create_daily_report(report:DailyReport ) -> DailyReport:    
     report_dict = report.model_dump()
     if os.getenv("TESTING") == "True":
         daily_report_collection.insert_one(report_dict)
