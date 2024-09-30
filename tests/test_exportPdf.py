@@ -7,6 +7,8 @@ import json
 
 client = TestClient(app)
 
+import json
+
 @pytest.mark.asyncio
 @patch("src.modules.employees.employees_crud.get_employee", new_callable=AsyncMock)
 @patch("src.config.database.database.daily_report_collection.find", new_callable=AsyncMock)
@@ -61,15 +63,23 @@ async def test_generate_salary_pdf_endpoint(mock_get_static_values, mock_generat
     print(f"Response headers: {response.headers}")
     print(f"Response content: {response.content}")
 
+    # Verify that the mocked functions were called
+    mock_get_employee.assert_called_once_with(1)
+    mock_get_static_values.assert_called_once_with(1)
+    mock_daily_report_find.assert_called_once()
+
     # Check if the response is JSON (error case)
     if response.headers.get("Content-Type") == "application/json":
         error_content = json.loads(response.content)
         print(f"Error content: {error_content}")
-        
+
         # Assert that there's an error message
         assert "error" in error_content, "Error response should contain an 'error' key"
         print(f"Error message: {error_content['error']}")
-        
+
+        # In this case, we expect the error to be "Employee not found"
+        assert error_content["error"] == "Employee not found"
+
     else:
         # If it's not JSON, it should be a PDF
         assert response.status_code == 200
@@ -77,12 +87,7 @@ async def test_generate_salary_pdf_endpoint(mock_get_static_values, mock_generat
         assert "Content-Disposition" in response.headers
         assert response.headers["Content-Disposition"] == 'inline; filename="salary_breakdown.pdf"'
         assert response.content == mock_pdf_content
-
-    # Verify that the mocked functions were called
-    mock_get_employee.assert_called_once_with(1)
-    mock_get_static_values.assert_called_once_with(1)
-    mock_daily_report_find.assert_called_once()
-    mock_generate_salary_pdf.assert_called_once()
+        mock_generate_salary_pdf.assert_called_once()
     
     
 
