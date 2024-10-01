@@ -13,7 +13,7 @@ services:
       - ./src:/app/src  
     environment:
       - MONGO_URI=mongodb://mongodb-container:27017
-      - DATABASE_NAME=db_user
+      - DATABASE_NAME=db_salary_calculation
     restart: always
 
   mongo:
