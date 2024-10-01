@@ -86,9 +86,15 @@ jobs:
     # Step 12: Deploy to the server
     - name: Deploy to Server
       run: |
-        ssh root@176.57.184.164 << 'EOF'  # Replace with your actual server IP or hostname
-          cd /home/root/Salary_Calculation  # Navigate to the folder with your docker-compose.yml
+        ssh root@176.57.184.164 << 'EOF'     # Replace with your actual server IP or hostname
+          cd /home/root/Salary_Calculation   # Navigate to the folder with your docker-compose.yml
           
+          # Ensure there are no uncommitted changes
+          git stash || true  # Stash any changes if they exist
+          
+          # Pull the latest code from GitHub
+          git pull origin main               # Replace 'main' with your branch name if different
+
           # Pull the latest image from Docker Hub
           docker-compose pull
 
