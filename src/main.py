@@ -15,7 +15,7 @@ app.include_router(users_router.router)
 app.include_router(employees_router.router, dependencies=[Depends(get_admin)])
 app.include_router(daily_reports_router.router, dependencies=[Depends(get_admin)])
 app.include_router(static_values_router.router, dependencies=[Depends(get_superadmin)])
-app.include_router(exportPdf.router)
+app.include_router(exportPdf.router,  dependencies=[Depends(get_admin)])
 
     
 @app.get("/")
