@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch, AsyncMock, MagicMock
 from src.main import app
+from src.modules.auth.authentication import create_access_token
 
 client = TestClient(app)
 
@@ -42,10 +43,15 @@ async def test_generate_salary_pdf_endpoint(mock_get_static_values, mock_daily_r
         }
     ]
     mock_daily_report_find.return_value.to_list.return_value = mock_daily_reports
+    
+    with patch('src.modules.auth.authorizations.get_admin', return_value={"email": "admin@example.com", "role": "admin"}):      
+        token = create_access_token({"sub": "admin@example.com", "role": "admin"})
+        # Make the request to the endpoint
+        response = client.get(
+                "/generate_salary_pdf/1/1",
+                headers={"Authorization": f"Bearer {token}"}
+            )
 
-    # Make the request to the endpoint
-    response = client.get("/generate_salary_pdf/1/1")  # Use await for async call
-
-    # Assertions
-    assert response.status_code == 200
-    assert response.headers["Content-Type"] == "application/json"
+        # Assertions
+        assert response.status_code == 200
+        assert response.headers["Content-Type"] == "application/json"
