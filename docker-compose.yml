@@ -9,8 +9,8 @@ services:
       - "8000:8000"
     depends_on:
       - mongo
-    volumes:
-      - ./src:/app/src  
+    volumes: []
+      # - ./src:/app/src  
     environment:
       - MONGO_URI=mongodb://mongodb-container:27017
       - DATABASE_NAME=db_salary_calculation
