@@ -133,9 +133,13 @@ async def generate_salary_pdf_endpoint(employee_id: int, values_id:int):
     if employee.employee_type.is_appointment_serrer == True:
         if kpis_values >= static_values.no_of_qulified_appt_tier_setter[employee.tier_type] * 30:
             kpis_total = kpis_amount * static_values.kpis
+        else:
+            kpis_total = 0
     else:
         if kpis_values >= static_values.no_of_qulified_appt_tier_fronter[employee.tier_type] * 30:
             kpis_total = kpis_amount * static_values.kpis
+        else:
+            kpis_total = 0
             
     # Prepare list of spiffs in compensation
     spiffs_list = []
