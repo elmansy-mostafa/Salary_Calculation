@@ -16,6 +16,7 @@ services:
       - DATABASE_NAME=db_salary_calculation
     restart: always
 
+
   mongo:
     image: mongo:latest
     container_name: mongodb-container
